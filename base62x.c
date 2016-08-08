@@ -52,7 +52,8 @@ int main( int argc, char *argv[] ){
     for(i=0; i<=xpos; i++){
         if( i>bpos && i<xpos){
             //--omit x1, x2, x3
-        }else{
+        }
+		else{
             rb62x[b62x[i]] = i;
         }
     }
@@ -77,7 +78,7 @@ int main( int argc, char *argv[] ){
                 fbase = atoi(argv[i]);
                 if(isdebug){
                     printf("--xx-- code:[%s] fbase:[%d] %s\n", code, fbase, argv[i]);
-                 }
+                }
             }
             else if( !strcmp(code, deg)){
                 issetv = 1;
@@ -249,11 +250,11 @@ int main( int argc, char *argv[] ){
                            if( c2>bpos){ output[++m]=xtag;output[++m]=b62x[c2]; }else{ output[++m]=b62x[c2]; }
                            if( c3>bpos){ output[++m]=xtag;output[++m]=b62x[c3]; }else{ output[++m]=b62x[c3]; }
                            i+=2; 
-                   }
+                    }
                    m++;
                }
 			   while( ++i < inputlen); 
-           }
+            }
         }
         else{
             /* try to decode */
