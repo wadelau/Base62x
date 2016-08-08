@@ -53,7 +53,7 @@ int main( int argc, char *argv[] ){
         if( i>bpos && i<xpos){
             //--omit x1, x2, x3
         }
-		else{
+	else{
             rb62x[b62x[i]] = i;
         }
     }
@@ -107,7 +107,7 @@ int main( int argc, char *argv[] ){
         int arrsize = (int)(inputlen+8)*4/3 ;
         unsigned char output[arrsize]; //*output[ arrsize ] 
 
-		//- for integer
+	//- for integer
         if( issetn){
             char *endptr, *out;
             int obase = xpos;
@@ -126,28 +126,28 @@ int main( int argc, char *argv[] ){
             return 0;
         }
         
-		//- for string
+	//- for string
         int remaini = 0;
-		if( codetype == 0 && input[0] <= ascmax){
-			asctype = 1;
-			for(i=1; i<inputlen; i++){
-				int tmpi = input[i];
-				if(tmpi > ascmax
-						|| (tmpi > 16 && tmpi < 21) // DC1-4
-						|| (tmpi > 27 && tmpi < 32)) // FC, GS, RS, US
-				{
-					asctype = 0;
-					if( isdebug){
-						printf("try to enc/dec within asc, but found input[%d]:[%d] beyond ASCII.\n", 
-							i, input[i]);    
-					}
-					break;
-				}    
-			}
+	if( codetype == 0 && input[0] <= ascmax){
+		asctype = 1;
+		for(i=1; i<inputlen; i++){
+			int tmpi = input[i];
+			if(tmpi > ascmax
+				|| (tmpi > 16 && tmpi < 21) // DC1-4
+				|| (tmpi > 27 && tmpi < 32)) // FC, GS, RS, US
+			{
+				asctype = 0;
+				if( isdebug){
+					printf("try to enc/dec within asc, but found input[%d]:[%d] beyond ASCII.\n", 
+						i, input[i]);    
+				}
+				break;
+			}    
 		}
-		else if( codetype == 1 && input[inputlen-1] == xtag){
-			asctype = 1;    
-		}
+	}
+	else if( codetype == 1 && input[inputlen-1] == xtag){
+		asctype = 1;    
+	}
 
         if(asctype == 1){
             for(i=0; i<=ascmax; i++){ ascidx[i] = -1; }
@@ -182,10 +182,10 @@ int main( int argc, char *argv[] ){
             /* try to encode.... */
            if(asctype == 1){
               //- for ascii
-			  do{
+		do{
                 if( isdebug){
-                  //printf("i:[%d] n:[%d] char:[%c] ascidx:[%d] o:[%s]\n", 
-				  //	i, input[i], input[i], ascidx[input[i]], &output); 
+                	//printf("i:[%d] n:[%d] char:[%c] ascidx:[%d] o:[%s]\n", 
+			//	i, input[i], input[i], ascidx[input[i]], &output); 
                 }
                 if( ascidx[input[i]] > -1){
                     output[m]=xtag;output[++m]=ascidx[input[i]];    
@@ -197,12 +197,12 @@ int main( int argc, char *argv[] ){
                     output[m] = input[i];    
                 }
                 m++;
-              }
-			  while(++i < inputlen);    
-              output[m++] = xtag; // asctype has a tag 'x' appended
+                }
+		while(++i < inputlen);    
+           	output[m++] = xtag; // asctype has a tag 'x' appended
            }
            else{
-			   //- for non-ascii
+		//- for non-ascii
                int c0=0; int c1=0; int c2=0; int c3=0;
                do{
                    remaini = inputlen - i;
@@ -213,7 +213,7 @@ int main( int argc, char *argv[] ){
                        case 1:
                            if( isdebug){
                                printf(" reach to the last one. i:[%d] char:[%c] inputlen:[%d]\n", 
-									i, input[i], inputlen);
+					i, input[i], inputlen);
                            }
                            c0 = input[i] >> 2;
                            //c1 = ( ( (input[i] << 6) & 0xff ) >> 2 ); //- v0.3, hereinafter
@@ -225,7 +225,7 @@ int main( int argc, char *argv[] ){
                        case 2:
                            if( isdebug){
                                printf(" reach to the last two. i:[%d] char:[%c] inputlen:[%d]\n", 
-									i, input[i], inputlen);
+					i, input[i], inputlen);
                            }
                            c0 = input[i] >> 2;
                            c1 = ( ((input[i] << 6) & 0xff) >> 2 ) | ( input[i+1] >> 4 );
@@ -252,23 +252,23 @@ int main( int argc, char *argv[] ){
                            i+=2; 
                     }
                    m++;
-               }
-			   while( ++i < inputlen); 
+                }
+		while( ++i < inputlen); 
             }
         }
         else{
             /* try to decode */
             if(asctype == 1){
-				//- for ascii
-              do{
+		//- for ascii
+                do{
                 if( isdebug){
-                  printf("i:[%d] n:[%d] char:[%c] ascidx:[%d] o:[%s]\n", i, input[i], 
-						input[i], ascrlist[input[i]], &output); 
+                	printf("i:[%d] n:[%d] char:[%c] ascidx:[%d] o:[%s]\n", i, input[i], 
+				input[i], ascrlist[input[i]], &output); 
                 }
                 if( input[i] == xtag){
                     if( input[i+1] == xtag){
-                      output[m] = xtag;      
-                      i++;
+                      	output[m] = xtag;      
+                      	i++;
                     }
                     else{
                       output[m]=ascrlist[input[++i]];    
@@ -278,10 +278,10 @@ int main( int argc, char *argv[] ){
                     output[m] = input[i];    
                 }
                 m++;
-              }while(++i < inputlen-1);  
+              	}while(++i < inputlen-1);  
             }
             else{
-				//- for non-ascii
+		//- for non-ascii
                 int c0=0; int c1=0; int c2=0; int k=0; 
                 unsigned char tmpin[4];
                 bint['1']=1; bint['2']=2; bint['3']=3; /* special handling with x1, x2, x3 *2 */
@@ -300,7 +300,7 @@ int main( int argc, char *argv[] ){
                         case 2:
                             if( isdebug){
                                 printf("  remn:[%d] should be the last one. i:[%d] char:[%c] inputlen:[%d]\n", 
-									remaini, i, input[i], inputlen);
+					remaini, i, input[i], inputlen);
                             }
                             if( input[i]==xtag){ tmpin[0] = bpos+bint[input[++i]]; k++; }else{ tmpin[0]=rb62x[input[i]]; }
                             if( input[++i]==xtag){ tmpin[1] = bpos+bint[input[++i]]; k++; }else{ tmpin[1]=rb62x[input[i]]; }
@@ -309,15 +309,15 @@ int main( int argc, char *argv[] ){
                             output[m]=c0;
                             if( isdebug){
                                 printf("\ti:[%d] decode char:[%c %c %c %c] from:[%d %d %d %d] to:[%c %c %c] val:[%d %d %d] k:[%d]\n", 
-                                            i, input[i-3],input[i-2], input[i-1], input[i], tmpin[0], 
-                                            tmpin[1], 0, 0, c0, 0, 0, c0, 0, 0, k);
+                                        i, input[i-3],input[i-2], input[i-1], input[i], tmpin[0], 
+                                        tmpin[1], 0, 0, c0, 0, 0, c0, 0, 0, k);
                             }
                             break;
 
                         case 3:
                             if( isdebug){
                                 printf("  remn:[%d] get to the last two. i:[%d] char:[%c] inputlen:[%d]\n", 
-										remaini, i, input[i], inputlen);
+					remaini, i, input[i], inputlen);
                             }
                             if( input[i]==xtag){ tmpin[0] = bpos+bint[input[++i]]; k++; }else{ tmpin[0]=rb62x[input[i]]; }
                             if( input[++i]==xtag){ tmpin[1] = bpos+bint[input[++i]]; k++; }else{ tmpin[1]=rb62x[input[i]]; }
@@ -329,8 +329,8 @@ int main( int argc, char *argv[] ){
                             output[++m]=c1;
                             if( isdebug){
                                 printf("\ti:[%d] decode char:[%c %c %c %c] from:[%d %d %d %d] to:[%c %c %c] val:[%d %d %d] k:[%d]\n", 
-                                            i, input[i-3],input[i-2], input[i-1], input[i], tmpin[0], 
-                                            tmpin[1], tmpin[2], 0, c0, c1, 0, c0, c1, 0, k);
+                                        i, input[i-3],input[i-2], input[i-1], input[i], tmpin[0], 
+                                        tmpin[1], tmpin[2], 0, c0, c1, 0, c0, c1, 0, k);
                             }
                             break;
 
@@ -350,21 +350,20 @@ int main( int argc, char *argv[] ){
                             output[++m]=c2;
                             if( isdebug){
                                 printf("    i:[%d] decode char:[%c %c %c %c] from:[%d %d %d %d] to:[%c %c %c] val:[%d %d %d] k:[%d]\n", 
-										i, input[i-3],input[i-2],input[i-1], input[i], tmpin[0], tmpin[1], tmpin[2], tmpin[3],
-										c0, c1, c2, c0, c1, c2, k);
+					i, input[i-3],input[i-2],input[i-1], input[i], tmpin[0], tmpin[1], tmpin[2], tmpin[3],
+					c0, c1, c2, c0, c1, c2, k);
                             }
                     }
                     m++;
-
                 }
-				while( ++i < inputlen);
+		while( ++i < inputlen);
             }
         }
 
         int k = strlen( output);
         if( isdebug){
             printf("---xxx -i:[%d] char:[%c]. m:[%d] getchar:[%c] arrsize:[%d] out-size:[%d]\n", i, input[i], 
-					m, output[m], arrsize, strlen(output));
+		m, output[m], arrsize, strlen(output));
         }
 
         for( i=m; i<k; i++){
