@@ -18,7 +18,8 @@ print "[$s2_enc] decoded:[".($s2_dec=Base62x::decode($s2_enc))."]\n";
 print "\n[$s3] encoded:[".($s3_enc=Base62x::encode($s3))."]\n";
 print "[$s3_enc] decoded:[".($s3_dec=Base62x::decode($s3_enc))."]\n";
 
-$s = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwyz123x";
+$s = "d=03a19e897ffc3c8e23adbe8267b02c89;ci:A3464;oi:ou_497535;nt:IN;ai:server_to_server_cache_udid;price:0.28;union:OU;";
 #print implode("','", str_split($s));
-
+print "[$s] encoded:[".($s_enc=Base62x::encode($s))."]\n";
 ?>
+

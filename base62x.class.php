@@ -207,27 +207,27 @@ class Base62x {
 				do{
 					$tmpArr = array('\0', '\0', '\0', '\0');
 					$remaini = $inputlen - $i;
-					$k = 0;
+					$k = 0; # what for?
 					switch($remaini){
 						case 1:
 							error_log(__FILE__.": found illegal base62x input:[".$inputArr[$i]."]. 1608091042.");
 							break;
 						
 						case 2:
-							if($inputArr[$i] == $xtag){ $tmpArr[0] = $bpos + $bint[$inputArr[++$i]]; $k++; }
+							if($inputArr[$i] == $xtag){ $tmpArr[0] = $bpos + $bint[$inputArr[++$i]]; }
 							else{$tmpArr[0] = $rb62x[$inputArr[$i]]; }
-							if($inputArr[++$i] == $xtag){ $tmpArr[1] = $bpos + $bint[$inputArr[++$i]]; $k++; }
+							if($inputArr[++$i] == $xtag){ $tmpArr[1] = $bpos + $bint[$inputArr[++$i]]; }
 							else{$tmpArr[1] = $rb62x[$inputArr[$i]]; }
 							$c0 = $tmpArr[0] << 2 | $tmpArr[1];
 							$op[$m] = chr($c0);
 							break;	
 
 						case 3:
-							if($inputArr[$i] == $xtag){ $tmpArr[0] = $bpos + $bint[$inputArr[++$i]]; $k++; }
+							if($inputArr[$i] == $xtag){ $tmpArr[0] = $bpos + $bint[$inputArr[++$i]]; }
 							else{$tmpArr[0] = $rb62x[$inputArr[$i]]; }
-							if($inputArr[++$i] == $xtag){ $tmpArr[1] = $bpos + $bint[$inputArr[++$i]]; $k++; }
+							if($inputArr[++$i] == $xtag){ $tmpArr[1] = $bpos + $bint[$inputArr[++$i]]; }
 							else{$tmpArr[1] = $rb62x[$inputArr[$i]]; }
-							if($inputArr[++$i] == $xtag){ $tmpArr[2] = $bpos + $bint[$inputArr[++$i]]; $k++; }
+							if($inputArr[++$i] == $xtag){ $tmpArr[2] = $bpos + $bint[$inputArr[++$i]]; }
 							else{$tmpArr[2] = $rb62x[$inputArr[$i]]; }
 							$c0 = $tmpArr[0] << 2 | $tmpArr[1] >> 4;
 							$c1 = (($tmpArr[1] << 4) & 0xf0) | $tmpArr[2];
@@ -236,13 +236,13 @@ class Base62x {
 							break;
 
 						default:
-							if($inputArr[$i] == $xtag){ $tmpArr[0] = $bpos + $bint[$inputArr[++$i]]; $k++; }
+							if($inputArr[$i] == $xtag){ $tmpArr[0] = $bpos + $bint[$inputArr[++$i]]; }
 							else{$tmpArr[0] = $rb62x[$inputArr[$i]]; }
-							if($inputArr[++$i] == $xtag){ $tmpArr[1] = $bpos + $bint[$inputArr[++$i]]; $k++; }
+							if($inputArr[++$i] == $xtag){ $tmpArr[1] = $bpos + $bint[$inputArr[++$i]]; }
 							else{$tmpArr[1] = $rb62x[$inputArr[$i]]; }
-							if($inputArr[++$i] == $xtag){ $tmpArr[2] = $bpos + $bint[$inputArr[++$i]]; $k++; }
+							if($inputArr[++$i] == $xtag){ $tmpArr[2] = $bpos + $bint[$inputArr[++$i]]; }
 							else{$tmpArr[2] = $rb62x[$inputArr[$i]]; }
-							if($inputArr[++$i] == $xtag){ $tmpArr[3] = $bpos + $bint[$inputArr[++$i]]; $k++; }
+							if($inputArr[++$i] == $xtag){ $tmpArr[3] = $bpos + $bint[$inputArr[++$i]]; }
 							else{$tmpArr[3] = $rb62x[$inputArr[$i]]; }
 							$c0 = $tmpArr[0] << 2 | $tmpArr[1] >> 4;
 							$c1 = (($tmpArr[1] << 4) & 0xf0) | ($tmpArr[2] >> 2);
