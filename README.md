@@ -11,17 +11,19 @@ Article Number, 6020065 ;
 
 # base62x.c
 
-./base62x
+shell> gcc -lm base62x.c -o base62x
+
+shell>./base62x
 
 Usage: ./base62x [-v] [-n <2|8|10|16|32>] <-enc|dec> string
 
 Version: 0.70
 
-./base62x -enc "abc! \" # $ % & 中文chn"
+shell>./base62x -enc "abc! \" # $ % & 中文chn"
 
 OM9Z8I0Y82CW920b82OWvBYjvfQ7OsXk
 
-./base62x -dec "OM9Z8I0Y82CW920b82OWvBYjvfQ7OsXk"
+shell>./base62x -dec "OM9Z8I0Y82CW920b82OWvBYjvfQ7OsXk"
 
 abc! " # $ % & 中文chn
 
