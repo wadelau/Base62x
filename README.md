@@ -72,3 +72,7 @@ Output:
 
 [8bHZR6Lo9tCWLsbhQJeWLLH6BJWWOcbq869v869fT20eKcLsQNDfRsuWDYaYBY0oC30vBJ0qBJ8rBY1IPNHoQMLsPMGWCZ0mEIqmDIqoCYv9RY1lSdHeRsHlU21LL4OjE2mWOI1ELKmWOdbqPI0eN7WmC2aWQNCWScLmScLpPMvqPMGWOdaWOI1ELKmWOdbqPIuWMx2A0fbqWGdLq85lYWAPT87Tb85lYWAPT87TXRdGWJbLC869vT6Lp86bkSsbaPI1Rue2cNI1pT79fRcTp85lYWAPT87mWuf6W8EAHeI3YaQ8Wuf6Z8EAHf23YaQKWuf6c87mW8EA5e23YXQ4WueMY8EA5eo3YXQGWueMb8EA5fY3YXQSWueMe8EA5gI1z824W82CW920b82OW9o0e82aWAY0h82mWBI0k82F] decoded:["Tcler's Wiki: UTF-8 bit by bit (Revision 6)". 2009-04-25. Retrieved 2009-05-22.In orthodox UTF-8, a NUL byte (\x00) is represented by a NUL byte. […] But […] we […] want NUL bytes inside […] strings […] | ① ② ③ ④ ⑤ ⑥ ⑦ |  Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅷ Ⅸ Ⅹ | !  # $ % & ' ( ) * + , - . /]
 
+# Base62x in -Java
+
+@todo
+
