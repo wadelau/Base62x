@@ -32,7 +32,7 @@ abc! " # $ % & 中文chn
 base62x.class.php
 
 In base62x_test.php
-
+```php
 <?php
 
 include("./base62x.class.php");
@@ -59,7 +59,7 @@ print "\n[$s3] encoded:[".($s3_enc=Base62x::encode($s3))."]\n";
 print "[$s3_enc] decoded:[".($s3_dec=Base62x::decode($s3_enc))."]\n";
 
 ?>
-
+```
 Output of base62x_test.php:
 
 [abcd1234] encoded:[abcd1234x]
