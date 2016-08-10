@@ -1,13 +1,17 @@
 # -Base62x
 Base62x is an alternative approach to Base 64 without symbols in output.
 
+![base62x](http://ufqi.com/dev/base62x/b62x-icon-201306.png)
+
+###Compact, purified and even shorter!
+
 -Base62x .
 
 # -Base62x Paper in IEEE
 
 Article Number, 6020065 ;
 
--R/C2TZ , page url in -URL4P .
+[-R/C2TZ](http://ufqi.com/naturedns/search?q=-r/CTTZ) , page url in [-URL4P](http://ufqi.com/naturedns/search?q=-url4p) .
 
 # base62x.c
 
