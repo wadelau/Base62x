@@ -1,7 +1,7 @@
 # -Base62x
 Base62x is an alternative approach to Base 64 without symbols in output.
 
-![base62x](http://ufqi.com/dev/base62x/b62x-icon-201306.png)
+![base62x](https://ufqi.com/dev/base62x/b62x-icon-201306.png)
 
 ###Compact, purified and even shorter!
 
