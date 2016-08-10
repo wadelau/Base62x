@@ -31,7 +31,7 @@ abc! " # $ % & 中文chn
 
 base62x.class.php
 
-in base62x_test.php
+In base62x_test.php
 
 <?php
 
