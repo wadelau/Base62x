@@ -15,7 +15,7 @@ Article Number, 6020065 ;
 
 # base62x.c
 
-base62x.c
+##base62x.c
 
 shell> gcc -lm base62x.c -o base62x
 
@@ -35,9 +35,9 @@ abc! " # $ % & 中文chn
 
 # Base62x in -PHP
 
-base62x.class.php
+##base62x.class.php
 
-base62x_test.php
+##base62x_test.php
 
 In base62x_test.php
 ```php
@@ -84,9 +84,9 @@ Output of base62x_test.php:
 
 # Base62x in -Java
 
-Base62x.class.jsp
+##Base62x.class.jsp
 
-base62x_test.jsp
+##base62x_test.jsp
 
 In base62x_test.jsp
 
@@ -138,7 +138,7 @@ out.println("<br/><br/>Time:["+(new Date())+"] "+((new java.util.Random()).nextI
 %>
 ```
 
-Output of base62x_test.jsp
+Output of base62x_test.jsp:
 
 [abcd1234] encoded:[abcd1234x] 
 
