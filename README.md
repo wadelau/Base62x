@@ -11,7 +11,7 @@ Base62x is an alternative approach to Base 64 without symbols in output.
 
 Article Number, 6020065 ;
 
-[-R/C2TZ](http://ufqi.com/naturedns/search?q=-r/CTTZ) , page url in [-URL4P](http://ufqi.com/naturedns/search?q=-url4p) .
+[-R/C2TZ](http://ufqi.com/naturedns/search?q=-r/C2TZ) , page url in [-URL4P](http://ufqi.com/naturedns/search?q=-url4p) .
 
 # base62x.c
 
