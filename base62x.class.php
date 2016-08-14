@@ -252,7 +252,6 @@ class Base62x {
 							$op[++$m] = chr($c2);	
 					}
 					$m++;
-
 				}
 				while(++$i < $inputlen);
 			}
@@ -310,7 +309,7 @@ class Base62x {
 		
 		$ret = array();
 
-		$isasc = 0;
+		$asctype = 0;
 		$xtag = self::XTAG;
 		$inputlen = count($inputArr);
 		if($codetype == 0 && $inputArr[0] <= $ascmax){
@@ -345,19 +344,19 @@ class Base62x {
 				$idxi++;
 			}
 			# FS, GS, RS, US, skip
-			$tmpi = ord('/');
+			$tmpi = 47; # ord('/');
 			for($i=ord(' '); $i<$tmpi; $i++){
 				$ascidx[$i] = $asclist[$idxi]; 
 				$ascrlist[$asclist[$idxi]] = $i;
 				$idxi++;
 			}
-			$tmpi = ord('@');
+			$tmpi = 64; # ord('@');
 			for($i=ord(':'); $i<$tmpi; $i++){
 				$ascidx[$i] = $asclist[$idxi]; 
 				$ascrlist[$asclist[$idxi]] = $i;
 				$idxi++;
 			}
-			$tmpi = ord('`');
+			$tmpi = 96; # ord('`');
 			for($i=ord('['); $i<$tmpi; $i++){
 				$ascidx[$i] = $asclist[$idxi]; 
 				$ascrlist[$asclist[$idxi]] = $i;

@@ -105,7 +105,7 @@ int main( int argc, char *argv[] ){
 
 	int m = 0;
 	int inputlen = strlen(input);
-	int arrsize = (int)(inputlen+8)*4/3 ;
+	int arrsize = (int)inputlen * 2;  //- why? maxium of output length
 	unsigned char output[arrsize]; //*output[ arrsize ] 
 
 	//- for integer
