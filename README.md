@@ -5,7 +5,7 @@ Base62x is an alternative approach to Base 64 without symbols in output.
 
 ###Compact, purified and even shorter!
 
--Base62x .
+-Base62x(https://ufqi.com/naturedns/search?q=-base62x) .
 
 # -Base62x Paper in IEEE
 
