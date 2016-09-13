@@ -47,7 +47,7 @@ public static final class Base62x{
 	private int[] rb62x = new int[]{};
 
 	private static final int ascmax = 127;
-	private static final byte[] asclist = {'4','5','6','7','8','9',
+	private static final byte[] asclist = {'4','5','6','7','8','9', '0',
 		'A','B','C','D','E','F','G','H','I','J','K','L','M','N',
 		'O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b',
 		'c','d','e','f','g','h','i','j','k','l','m','n','o','p',
@@ -361,10 +361,10 @@ public static final class Base62x{
 
 		if(isasc){
 			int i = 0;
-			for(i=0; i<ascmax; i++){ ascidx[i] = -1; }
+			for(i=0; i<=ascmax; i++){ ascidx[i] = -1; }
 			int idxi = 0;
 			int[] starti = new int[]{0, 21, 32, 58, 91, 123}; //- 0, NAK, ' ', ':', '[', '{'
-			int[] endi = new int[]{17, 28, 47, 64, 96, ascmax}; //- 17, FS, '/', '@', '`'
+			int[] endi = new int[]{17, 28, 48, 65, 97, ascmax}; //- 17, FS, '/', '@', '`'
 
 			int ilen = starti.length;
 			for(int n=0; n<ilen; n++){

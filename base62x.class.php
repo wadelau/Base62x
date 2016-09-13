@@ -8,6 +8,7 @@
  	https://github.com/wadelau/Base62x
  	https://ufqi.com/dev/base62x/?_via=-naturedns
  * Tue Aug  9 21:18:14 CST 2016
+ * bugfix, 13:39 13 September 2016
  */
 
 
@@ -33,11 +34,11 @@ class Base62x {
 	const xpos = 64; # b62x[64] = 'x'
 	static $rb62x = array();
 	const ascmax = 127;
-	const asclist = array('4','5','6','7','8','9',
+	const asclist = array('4','5','6','7','8','9', '0',
 		'A','B','C','D','E','F','G','H','I','J','K','L','M','N',
 		'O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b',
 		'c','d','e','f','g','h','i','j','k','l','m','n','o','p',
-		'q','r','s','t','u','v','w','y','z');
+		'q','r','s','t','u','v','w','y','z'); # 58 
 	
 	var $ascidx = array();
 	var $ascrlist = array();
@@ -76,9 +77,8 @@ class Base62x {
 			$asctype = $setResult['asctype'];
 			$ascidx = $setResult['ascidx'];
 			$ascrlist = $setResult['ascrlist'];
-			
-			$op = array();
 
+			$op = array();
 			$i = 0; $m = 0;
 			if($asctype == 1){
 				do{
@@ -132,11 +132,9 @@ class Base62x {
 							if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }else{ $op[++$m] = $b62x[$c1]; } 
 							if($c2 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c2]; }else{ $op[++$m] = $b62x[$c2]; } 
 							if($c3 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c3]; }else{ $op[++$m] = $b62x[$c3]; } 
-							#print "i:[$i] char:[".$inputArr[$i]."] m:[$m] c0:[$c0] rb:[".$b62x[$c0]."] c1:[$c1] c2:[$c2] [$c3]\n";
 							$i += 2;	
 					}
 					$m++;
-					#print_r($op);
 				}
 				while(++$i < $inputlen);
 			}
@@ -179,7 +177,6 @@ class Base62x {
 			$ascrlist = $setResult['ascrlist'];
 			
 			$op = array();
-
 			$i = 0; $m = 0;
 			if($asctype == 1){
 				$inputlen--;
@@ -190,7 +187,7 @@ class Base62x {
 							$i++;
 						}
 						else{
-							$op[$m] = $ascrlist[$inputArr[++$i]];	
+							$op[$m] = chr($ascrlist[$inputArr[++$i]]);	
 						}
 					}
 					else{
@@ -267,7 +264,7 @@ class Base62x {
 
 		$onum = 0;
 
-
+		# @todo
 		
 		return $onum;
 
@@ -278,7 +275,7 @@ class Base62x {
 	
 		$onum = 0;
 
-
+		# @todo
 
 		return $onum;
 
@@ -330,7 +327,7 @@ class Base62x {
 		$ret['asctype'] = $asctype;
 
 		if($asctype == 1){
-			for($i=0; $i<$ascmax; $i++){ $ascidx[$i] = -1; }		
+			for($i=0; $i<=$ascmax; $i++){ $ascidx[$i] = -1; }		
 			$idxi = 0;
 			for($i=0; $i<17; $i++){
 				$ascidx[$i] = $asclist[$idxi]; 
@@ -345,24 +342,24 @@ class Base62x {
 			}
 			# FS, GS, RS, US, skip
 			$tmpi = 47; # ord('/');
-			for($i=ord(' '); $i<$tmpi; $i++){
+			for($i=ord(' '); $i<=$tmpi; $i++){
 				$ascidx[$i] = $asclist[$idxi]; 
 				$ascrlist[$asclist[$idxi]] = $i;
 				$idxi++;
 			}
 			$tmpi = 64; # ord('@');
-			for($i=ord(':'); $i<$tmpi; $i++){
+			for($i=ord(':'); $i<=$tmpi; $i++){
 				$ascidx[$i] = $asclist[$idxi]; 
 				$ascrlist[$asclist[$idxi]] = $i;
 				$idxi++;
 			}
 			$tmpi = 96; # ord('`');
-			for($i=ord('['); $i<$tmpi; $i++){
+			for($i=ord('['); $i<=$tmpi; $i++){
 				$ascidx[$i] = $asclist[$idxi]; 
 				$ascrlist[$asclist[$idxi]] = $i;
 				$idxi++;
 			}
-			for($i=ord('{'); $i<$ascmax; $i++){
+			for($i=ord('{'); $i<=$ascmax; $i++){
 				$ascidx[$i] = $asclist[$idxi]; 
 				$ascrlist[$asclist[$idxi]] = $i;
 				$idxi++;
