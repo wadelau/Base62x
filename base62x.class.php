@@ -9,6 +9,7 @@
  	https://ufqi.com/dev/base62x/?_via=-naturedns
  * Tue Aug  9 21:18:14 CST 2016
  * bugfix, 13:39 13 September 2016
+ * bugfix, Thu Sep 29 04:06:26 UTC 2016
  */
 
 
@@ -81,12 +82,13 @@ class Base62x {
 			$op = array();
 			$i = 0; $m = 0;
 			if($asctype == 1){
+				$ixtag = ord($xtag);
 				do{
 					$inputArr[$i] = ord($inputArr[$i]);
 					if($ascidx[$inputArr[$i]] > -1){
 						$op[$m] = $xtag; $op[++$m] = $ascidx[$inputArr[$i]];	
 					}
-					else if($inputArr[$i] == $xtag){
+					else if($inputArr[$i] == $ixtag){
 						$op[$m] = $xtag; $op[++$m] = $xtag;
 					}
 					else{
@@ -95,7 +97,7 @@ class Base62x {
 					$m++;
 				}
 				while(++$i < $inputlen);
-				$op[$m++] = $xtag; # asctype has a tag 'x' appended
+				$op[++$m] = $xtag; # asctype has a tag 'x' appended
 			}
 			else{
 				$c0 = 0; $c1 = 0; $c2 = 0; $c3 = 0;
