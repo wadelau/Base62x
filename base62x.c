@@ -13,6 +13,7 @@
  * 		for compile: gcc -lm base62x.c -o base62x
  * v0.7, Sun Apr  3 12:27:58 CST 2016, imprv for code format, output removing '\n' and relocated into -github-wadelau
  *		12:53 02 August 2016, improvs on codes.
+ * v0.8, Fri Oct  7 11:34:21 CST 2016, numeric conversion imprvs, max_safe_base.
  *
  */
 
@@ -47,7 +48,8 @@ int main( int argc, char *argv[] ){
     static const char asclist[] = "4567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwyz";
     int ascidx[ascmax+1];
     int ascrlist[ascmax+1]; 
-    static const float ver = 0.7;
+    static const int max_safe_base = 36;
+    static const float ver = 0.8;
 
     for(i=0; i<=xpos; i++){
         if( i>bpos && i<xpos){
@@ -59,7 +61,7 @@ int main( int argc, char *argv[] ){
     }
 
     if( argc<3){
-		printf("Usage: %s [-v] [-n <2|8|10|16|32>] <-enc|dec> string\n", argv[0]);
+		printf("Usage: %s [-v] [-n <2|8|10|16|32|36|60|62>] <-enc|dec> string\n", argv[0]);
 		printf("Version: %.2f\n", ver); 
 		return 1;
     }
@@ -116,7 +118,7 @@ int main( int argc, char *argv[] ){
 			obase = fbase;
 			fbase = xpos;
 		}
-		long long numofinput = xx2dec(input, fbase, xpos, rb62x);
+		long long numofinput = xx2dec(input, fbase, max_safe_base, rb62x);
 		
 		dec2xx(numofinput, obase, output, b62x);
 		
@@ -408,7 +410,7 @@ void *dec2xx(long long num, int base, char *out, char idx[]){
         //printf("--dec2xx-- out:[%s] orig:[%lld] base:[%d] mod:[%d]\n", out, num, base, b); 
     }
 
-    if( num < bpos){
+    if( num <= bpos){
         out[i++] = idx[num];
     }
     else{
@@ -456,7 +458,7 @@ long long xx2dec(char *input, int base, int safebase, char ridx[]){
             else{
                 tmpnum = ridx[input[j]];
             }
-            num += tmpnum*pow(base, j-xnum);
+            num += tmpnum * pow(base, j-xnum);
             //printf("--in xx2dec-- j:[%d], char:[%c] base:[%d] num:[%lld] xnum:[%d] tmpnum:[%d]\n",
             //    j, input[j], base, num, xnum, tmpnum);
        }

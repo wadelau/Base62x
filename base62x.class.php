@@ -10,6 +10,7 @@
  * Tue Aug  9 21:18:14 CST 2016
  * bugfix, 13:39 13 September 2016
  * bugfix, Thu Sep 29 04:06:26 UTC 2016
+ * imprvs on numeric conversion, Fri Oct  7 03:42:59 UTC 2016
  */
 
 
@@ -43,7 +44,8 @@ class Base62x {
 	
 	var $ascidx = array();
 	var $ascrlist = array();
-	static $ver = 0.7;
+	const max_safe_base = 36;
+	static $ver = 0.8;
 	
 
 	# methods
@@ -60,15 +62,16 @@ class Base62x {
 		$bpos = self::bpos;
 		$xpos = self::xpos;
 		$ascmax = self::ascmax;
+		$max_safe_base = self::max_safe_base;
 
 		$rb62x = self::fillRb62x($b62x, $bpos, $xpos);
 		$isNum = false;
 		if($ibase > 0){ $isNum = true; }
 		if($isNum){
 			$output = 0;
-			$num_input = self::xx2dec($input, $ibase, $xpos, $rb62x); 	
+			$num_input = self::xx2dec($input, $ibase, $max_safe_base, $rb62x); 	
 			$obase = $xpos;
-			$output = self::dec2xx($num_input, $obase, $rb62x);
+			$output = self::dec2xx($num_input, $obase, $b62x);
 			# why a mediate number format is needed?
 		}
 		else{
@@ -86,14 +89,16 @@ class Base62x {
 				do{
 					$inputArr[$i] = ord($inputArr[$i]);
 					if($ascidx[$inputArr[$i]] > -1){
-						$op[$m] = $xtag; $op[++$m] = $ascidx[$inputArr[$i]];	
+						$op[$m] = $xtag;
+						$op[++$m] = $ascidx[$inputArr[$i]];	
 					}
 					else if($inputArr[$i] == $ixtag){
-						$op[$m] = $xtag; $op[++$m] = $xtag;
+						$op[$m] = $xtag; 
+						$op[++$m] = $xtag;
 					}
 					else{
 						$op[$m] = chr($inputArr[$i]);	
-					}
+					}	
 					$m++;
 				}
 				while(++$i < $inputlen);
@@ -160,14 +165,15 @@ class Base62x {
 		$xpos = self::xpos;
 		$ascmax = self::ascmax;
 		$rb62x = self::fillRb62x($b62x, $bpos, $xpos);
+		$max_safe_base = self::max_safe_base;
 		
 		$isNum = false;
 		if($obase > 0){ $isNum = true; }
 		if($isNum){
 			$output = 0;
 			$ibase = $xpos;
-			$num_input = self::xx2dec($input, $ibase, $xpos, $rb62x); 	
-			$output = self::dec2xx($num_input, $obase, $rb62x);
+			$num_input = self::xx2dec($input, $ibase, $max_safe_base, $rb62x); 	
+			$output = self::dec2xx($num_input, $obase, $b62x);
 			# why a mediate number format is needed?
 		}
 		else{
@@ -265,20 +271,78 @@ class Base62x {
 	public static function xx2dec($inum, $ibase, $safebase, $ridx){
 
 		$onum = 0;
-
-		# @todo
-		
+		$obase = 10; $xtag = self::XTAG; $bpos = self::bpos;
+		$safebase = self::max_safe_base;
+		if($ibase <= $safebase){
+			$onum = base_convert($inum, $ibase, $obase);
+		}
+		else{
+			$iArr = str_split($inum);
+			$iArr = array_reverse($iArr);
+			$arrLen = count($iArr) - 1;
+			$xnum = 0;
+			for($i=0; $i<=$arrLen; $i++){
+				if($iArr[$i+1] == $xtag){
+					$tmpi = $bpos + $ridx[$iArr[$i]];
+					$xnum++;
+					$i++;
+				}
+				else{
+					$tmpi = $ridx[$iArr[$i]];	
+				}
+				$onum = $onum + $tmpi * pow($ibase, ($i - $xnum));	
+				#error_log(__FILE__.": xx2dec i:$i c:".$iArr[$i]." onum:$onum");
+			}
+			#$onum = sprintf("%u", $onum);
+			#$onum = number_format($onum, 0, '', '');
+			#$onum = (int)$onum;
+			if(strpos($onum, 'E') !== false){
+				error_log(__FILE__.": Base62x::xx2dec: lost precision due to too large number:[$onum]. consider using bc math. 1610072145.");
+				$onum = number_format($onum);	
+			}
+			#error_log(__FILE__.": xx2dec  after remedy i:$i c:".$iArr[$i]." onum:$onum");
+		}
+		#error_log(__FILE__.": xx2dec: in:$inum ibase:$ibase outindec:".$onum);
 		return $onum;
 
 	}
 
 	# dec2xx
-	public static function dec2xx($inum, $obase, $ridx){
+	public static function dec2xx($inum, $obase, $idx){
 	
 		$onum = 0;
-
-		# @todo
-
+		$ibase = 10; $xtag = self::XTAG; $bpos = self::bpos;
+		$safebase = self::max_safe_base;
+		#error_log(__FILE__.": dec2xx: 0 inindec:$inum obase:$obase");
+		if($obase <= $safebase){
+			$onum = base_convert($inum, $ibase, $obase);
+		}
+		else{
+			$i = 0; $b = 0;
+			$oArr = array();
+			while($inum >= $obase){
+				$b = $inum % $obase;
+				$inum = floor($inum / $obase);
+				if($b <= $bpos){
+					$oArr[$i++] = $idx[$b];
+				}
+				else{
+					$oArr[$i++] = $idx[$b - $bpos];
+					$oArr[$i++] = $xtag;
+				}
+			}
+			$b = $inum;
+			if($b <= $bpos){
+				$oArr[$i++] = $idx[$b];
+			}
+			else{
+				$oArr[$i++] = $idx[$b - $bpos];
+				$oArr[$i++] = $xtag;
+			}
+			$oArr = array_reverse($oArr);
+			$onum = implode($oArr);
+		}
+		#error_log(__FILE__.": dec2xx: 1 inindec:$inum obase:$obase out:".($onum));
 		return $onum;
 
 	}

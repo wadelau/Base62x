@@ -1,6 +1,45 @@
 <?php
 
 include("./base62x.class.php");
+include("./tools.function.php");
+
+$s = Wht::get($_REQUEST, 'mystring');
+$isenc = Wht::get($_REQUEST, 'isenc');
+
+if($isenc == '1'){
+	$enc = Base62x::encode($s);
+	#print "s:[$s] enc:[$enc]";
+	print $enc;
+}
+else{
+	$dec = Base62x::decode($s);
+	print $dec;
+}
+
+$sArr = array('100', '1000', '10000', '1000001', 'abc', 'abc123', 
+	'ccbbaa1122ffa', 'a1122334eeeffb', '1a2b3c4d5e6f0a', 'aabbcc11223344');
+
+$ibase = 20;
+foreach($sArr as $k=>$v){
+	$enc = Base62x::encode($s=$v, $ibase);
+	$dec = Base62x::decode($enc, $ibase);
+	print "\n$s enc:[".$enc."] dec:[$dec]";
+}
+
+$ibase = 16;
+foreach($sArr as $k=>$v){
+	$enc = Base62x::encode($s=$v, $ibase);
+	$dec = Base62x::decode($enc, $ibase);
+	print "\n$s enc:[".$enc."] dec:[$dec]";
+}
+$ibase = 32;
+foreach($sArr as $k=>$v){
+	$enc = Base62x::encode($s=$v, $ibase);
+	$dec = Base62x::decode($enc, $ibase);
+	print "\n$s enc:[".$enc."] dec:[$dec]";
+}
+
+/*
 
 $s = "abcd1234";
 $s2 = "abc中文123";
@@ -21,5 +60,8 @@ print "[$s3_enc] decoded:[".($s3_dec=Base62x::decode($s3_enc))."]\n";
 $s = "d=03a19e897ffc3c8e23adbe8267b02c89;ci:A3464;oi:ou_497535;nt:IN;ai:server_to_server_cache_udid;price:0.28;union:OU;";
 #print implode("','", str_split($s));
 print "[$s] encoded:[".($s_enc=Base62x::encode($s))."]\n";
+
+*/
+
 ?>
 
