@@ -395,40 +395,14 @@ class Base62x {
 		if($asctype == 1){
 			for($i=0; $i<=$ascmax; $i++){ $ascidx[$i] = -1; }		
 			$idxi = 0;
-			for($i=0; $i<17; $i++){
-				$ascidx[$i] = $asclist[$idxi]; 
-				$ascrlist[$asclist[$idxi]] = $i;
-				$idxi++;
-			}
-			# DC 1-4, skip
-			for($i=21; $i<28; $i++){
-				$ascidx[$i] = $asclist[$idxi]; 
-				$ascrlist[$asclist[$idxi]] = $i;
-				$idxi++;
-			}
-			# FS, GS, RS, US, skip
-			$tmpi = 47; # ord('/');
-			for($i=ord(' '); $i<=$tmpi; $i++){
-				$ascidx[$i] = $asclist[$idxi]; 
-				$ascrlist[$asclist[$idxi]] = $i;
-				$idxi++;
-			}
-			$tmpi = 64; # ord('@');
-			for($i=ord(':'); $i<=$tmpi; $i++){
-				$ascidx[$i] = $asclist[$idxi]; 
-				$ascrlist[$asclist[$idxi]] = $i;
-				$idxi++;
-			}
-			$tmpi = 96; # ord('`');
-			for($i=ord('['); $i<=$tmpi; $i++){
-				$ascidx[$i] = $asclist[$idxi]; 
-				$ascrlist[$asclist[$idxi]] = $i;
-				$idxi++;
-			}
-			for($i=ord('{'); $i<=$ascmax; $i++){
-				$ascidx[$i] = $asclist[$idxi]; 
-				$ascrlist[$asclist[$idxi]] = $i;
-				$idxi++;
+			$bgnArr = array(0, 21, 32, 58, 91, 123);
+			$endArr = array(17, 28, 48, 65, 97, $ascmax);
+			foreach($bgnArr as $k=>$v){
+				for($i=$v; $i<$endArr[$k]; $i++){
+					$ascidx[$i] = $asclist[$idxi]; 
+					$ascrlist[$asclist[$idxi]] = $i;
+					$idxi++;
+				}
 			}
 		}
 
