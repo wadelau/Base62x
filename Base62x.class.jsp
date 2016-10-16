@@ -364,7 +364,7 @@ public static final class Base62x{
 			for(i=0; i<=ascmax; i++){ ascidx[i] = -1; }
 			int idxi = 0;
 			int[] starti = new int[]{0, 21, 32, 58, 91, 123}; //- 0, NAK, ' ', ':', '[', '{'
-			int[] endi = new int[]{17, 28, 48, 65, 97, ascmax}; //- 17, FS, '/', '@', '`'
+			int[] endi = new int[]{17, 28, 48, 65, 97, ascmax+1}; //- 17, FS, '/', '@', '`'
 
 			int ilen = starti.length;
 			for(int n=0; n<ilen; n++){

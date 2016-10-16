@@ -396,7 +396,7 @@ class Base62x {
 			for($i=0; $i<=$ascmax; $i++){ $ascidx[$i] = -1; }		
 			$idxi = 0;
 			$bgnArr = array(0, 21, 32, 58, 91, 123);
-			$endArr = array(17, 28, 48, 65, 97, $ascmax);
+			$endArr = array(17, 28, 48, 65, 97, $ascmax+1);
 			foreach($bgnArr as $k=>$v){
 				for($i=$v; $i<$endArr[$k]; $i++){
 					$ascidx[$i] = $asclist[$idxi]; 
