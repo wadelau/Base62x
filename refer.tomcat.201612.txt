@@ -1,0 +1,22 @@
+
+tomcat, jsp compiled source files:
+
+http://stackoverflow.com/questions/6833711/where-are-compiled-jsp-java-jsp-java-files
+
+Tomcat
+ |-- backup
+ |-- bin
+ |-- conf
+ |-- lib
+ |-- logs
+ |-- temp
+ |-- webapps
+ `-- work
+      `-- Catalina
+           `-- localhost
+                `-- projectname
+                     `-- org
+                          `-- apache
+                               `-- jsp
+                                    |-- survey_jsp.class
+                                    `-- survey_jsp.java    <--- here

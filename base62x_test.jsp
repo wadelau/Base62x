@@ -51,7 +51,7 @@ int faili = 0;
 for(i=0; i<30000; i++){
     s = rd.nextInt(9999999) + "哈哈啊哈dbHSastrónomos chinos y árabes el 5 de HSGsjs_*&^" + rd.nextInt(9999999) + "*-8***Jd带回待会SJSJJAJJSJJsjsjsj((*&&&" +  rd.nextInt(9999999) + String.valueOf((new Byte((byte)61)));
     s_enc = Base62x.encode(s);
-    s_dec = Base62x.decode(s_enc+"x1");
+    s_dec = Base62x.decode("x2x1"); //- s_enc
     if(s.equals(s_dec)){
         succi++;
         //System.out.println("i:["+i+"] s:["+s+"] s_dec:["+s_dec+"] okay!");    

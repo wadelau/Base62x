@@ -411,7 +411,8 @@ public static final class Base62x{
 	private static byte[] _decodeByLength(int[] tmpArr, byte[] op, int m){
 		byte[] rtn = op;
 		
-		return (new byte[rtn, (byte)m]);
+		rtn[m++] = (byte)m; //- ?
+		return rtn;
 	}
 
 }
