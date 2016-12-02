@@ -53,8 +53,8 @@ public static final class Base62x{
 		'c','d','e','f','g','h','i','j','k','l','m','n','o','p',
 		'q','r','s','t','u','v','w','y','z'};
 
-	private static int[] ascidx = new int[ascmax];
-	private static byte[] ascrlist = new byte[ascmax];
+	private static int[] ascidx = new int[ascmax + 1];
+	private static byte[] ascrlist = new byte[ascmax + 1];
 
 	private static final double ver = 0.70;
 
@@ -240,6 +240,7 @@ public static final class Base62x{
 				int[] bint = new int[xpos]; bint[49]=1; bint[50]=2; bint[51]=3; //- array('1'=>1, '2'=>2, '3'=>3);
 				do{
 					remaini = inputlen - i;
+					tmpArr = new int[4];
 					switch(remaini){
 						case 1:
 							System.out.println("Base62x.decode: found illegal base62x input:["+input+"]. 1608091042.");
@@ -275,6 +276,7 @@ public static final class Base62x{
 							op[++m] = (byte)c1;
 							op[++m] = (byte)c2;
 					}
+					//System.out.println("0:["+tmpArr[0]+"] 1:["+tmpArr[1]+"] 2:["+tmpArr[2]+"] 3:["+tmpArr[3]+"]");
 					m++;
 				}
 				while(++i < inputlen);				
@@ -402,6 +404,14 @@ public static final class Base62x{
 		
 		return ostr;
 
+	}
+	
+	//- fix variable length of encoded string
+	//- Dec 01, 2016
+	private static byte[] _decodeByLength(int[] tmpArr, byte[] op, int m){
+		byte[] rtn = op;
+		
+		return (new byte[rtn, (byte)m]);
 	}
 
 }

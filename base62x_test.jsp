@@ -43,5 +43,29 @@ out.println("<br/>["+s3_enc+"] decoded:["+(s3_dec=Base62x.decode(s3_enc))+"]");
 
 out.println("<br/><br/>Time:["+(new Date())+"] "+((new java.util.Random()).nextInt(999999)));
 
+java.util.Random rd = new java.util.Random();
+
+int i = 0;
+int succi = 0;
+int faili = 0;
+for(i=0; i<30000; i++){
+    s = rd.nextInt(9999999) + "哈哈啊哈dbHSastrónomos chinos y árabes el 5 de HSGsjs_*&^" + rd.nextInt(9999999) + "*-8***Jd带回待会SJSJJAJJSJJsjsjsj((*&&&" +  rd.nextInt(9999999) + String.valueOf((new Byte((byte)61)));
+    s_enc = Base62x.encode(s);
+    s_dec = Base62x.decode(s_enc+"x1");
+    if(s.equals(s_dec)){
+        succi++;
+        //System.out.println("i:["+i+"] s:["+s+"] s_dec:["+s_dec+"] okay!");    
+    }
+    else{
+        faili++;
+        System.out.println("i:["+i+"] s:["+s+"] s_dec:["+s_dec+"] error!");
+    }
+    if(i%100 == 0){
+        System.out.println((new java.util.Date())+": "+"i:["+i+"] s:["+s+"] s_dec:["+s_dec+"] s_enc:["+s_enc+"] go!");
+    }
+}
+
+System.out.println("i:["+i+"] succi:["+succi+"] faili:["+faili+"] done!");
+
 
 %>

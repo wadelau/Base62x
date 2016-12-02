@@ -11,6 +11,7 @@
  * bugfix, 13:39 13 September 2016
  * bugfix, Thu Sep 29 04:06:26 UTC 2016
  * imprvs on numeric conversion, Fri Oct  7 03:42:59 UTC 2016
+ * bugifx by _decodeByLength, 20:40 28 November 2016
  */
 
 
