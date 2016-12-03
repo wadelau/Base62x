@@ -55,6 +55,9 @@ class Base62x {
 	public static function encode($input, $ibase=null){
 		
 		$output = null;
+		if($input == null || $input == ''){
+			return $input;
+		}
 
 		$codetype = 0;
 		$xtag = self::XTAG;
@@ -157,6 +160,9 @@ class Base62x {
 	public static function decode($input, $obase=null){
 		
 		$output = "";
+		if($input == null || $input == ''){
+			return $input;
+		}
 
 		$codetype = 1;
 		$xtag = self::XTAG;
