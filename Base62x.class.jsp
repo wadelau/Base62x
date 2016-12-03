@@ -2,11 +2,10 @@
 	import="java.util.Date,
 		java.util.HashMap,
 		java.util.Map,
-		java.util.Iterator"
+		java.util.Iterator,
+		java.util.Date"
 	language="java" 
 	pageEncoding="UTF-8"%><%
-
-
 %><%!
 
 /*
@@ -19,6 +18,7 @@
 	 https://ufqi.com/dev/base62x/?_via=-naturedns
  *  Wed Aug 10 22:16:24 CST 2016
  *  Sat Aug 13 10:48:52 CST 2016
+ *  bugfix by decodeByLength, Sat Dec  3 23:05:58 CST 2016
  */
 
 public static final class Base62x{
@@ -27,7 +27,6 @@ public static final class Base62x{
 	private boolean isdebug = false;
 	private int i = 0;
 	private int codetype = 0; //- 0:encode, 1:decode
-	//private static final char xtag = 'x';
 	private static final byte xtag = 'x';
 
 	private static final String encd = "-enc";
@@ -43,7 +42,6 @@ public static final class Base62x{
 
 	private static final int bpos = 60; //- 0-60 chars
 	private static final int xpos = 64; //- b62x[64] = 'x'
-	//private char[] rb62x = new char[]{};
 	private int[] rb62x = new int[]{};
 
 	private static final int ascmax = 127;
@@ -68,6 +66,9 @@ public static final class Base62x{
 	public static String encode(String input, int ibase){
 		
 		StringBuffer osb = new StringBuffer();
+		if(input == null || input.equals("")){
+			return osb.toString();	
+		}
 
 		int codetype = 0;
 		byte xtag = Base62x.xtag;
@@ -90,8 +91,7 @@ public static final class Base62x{
 		else{
 			//- string encoding	
 			boolean isasc = false;	
-			//char[] inputArr = input.toCharArray();
-			byte[] inputArr = input.getBytes();
+			byte[] inputArr = input.getBytes(); // new byte[]{-112, 25, 66, -12}; // //StandardCharsets.UTF_8
 			int inputlen = inputArr.length;
 			HashMap setResult = Base62x.setAscii(codetype, inputArr, ascidx, ascmax, asclist, ascrlist);
 			isasc = (boolean)setResult.get("isasc");
@@ -157,15 +157,14 @@ public static final class Base62x{
 							if(c1>bpos){ op[++m]=xtag; op[++m]=b62x[c1]; }else{ op[++m]=b62x[c1]; }
 							if(c2>bpos){ op[++m]=xtag; op[++m]=b62x[c2]; }else{ op[++m]=b62x[c2]; }
 							if(c3>bpos){ op[++m]=xtag; op[++m]=b62x[c3]; }else{ op[++m]=b62x[c3]; }
-							i += 2;
-							
+							i += 2;	
 					}
 					m++;
 				}
 				while(++i < inputlen);
 			}
 			byte[] op2 = new byte[m];
-			System.arraycopy(op, 0, op2, 0, m);
+			System.arraycopy(op, 0, op2, 0, m);	
 			osb.append(new String(op2));
 		}
 
@@ -177,6 +176,9 @@ public static final class Base62x{
 	public static String decode(String input, int obase){
 	
 		StringBuffer osb = new StringBuffer();
+		if(input == null || input.equals("")){
+			return osb.toString();	
+		}
 
 		int codetype = 1;
 		byte xtag = Base62x.xtag;
@@ -235,7 +237,8 @@ public static final class Base62x{
 			else{
 				//- non-ascii	
 				int c0=0; int c1=0;	int c2=0;
-				int remaini = 0;
+				int remaini = 0; 
+				int maxidx = inputlen - 1; int last8 = inputlen - 8; //- avoid outofArrayIndex
 				int[] tmpArr = new int[4];
 				int[] bint = new int[xpos]; bint[49]=1; bint[50]=2; bint[51]=3; //- array('1'=>1, '2'=>2, '3'=>3);
 				do{
@@ -248,42 +251,82 @@ public static final class Base62x{
 
 						case 2:
 							if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]];}else{ tmpArr[0]=rb62x[inputArr[i]]; }
-							if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]];/* should not be here*/}
-							else{ tmpArr[1]=rb62x[inputArr[i]]; }
-							c0 = (tmpArr[0] << 2) | tmpArr[1];
-							op[m] = (byte)c0;
+							if(i == maxidx){
+								c0 = (tmpArr[0] << 2);
+								op[m] = (byte)c0;
+							}
+							else{
+								if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]];}else{ tmpArr[1]=rb62x[inputArr[i]]; }
+								c0 = (tmpArr[0] << 2) | tmpArr[1];
+								op[m] = (byte)c0;
+							}
 							break;
 
 						case 3: 
 							if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }else{ tmpArr[0]=rb62x[inputArr[i]]; }
 							if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }else{ tmpArr[1]=rb62x[inputArr[i]]; }
-							if(inputArr[++i]==xtag){ tmpArr[2]=bpos+bint[inputArr[++i]]; }else{ tmpArr[2]=rb62x[inputArr[i]]; }
-							c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4);
-							c1 = ((tmpArr[1] << 4) & 0xf0) | tmpArr[2];
-							op[m] = (byte)c0;
-							op[++m] = (byte)c1;
+							if(i == inputlen - 1){
+								c0 = (tmpArr[0] << 2) | tmpArr[1];
+								op[m] = (byte)c0;
+							}
+							else{
+								if(inputArr[++i]==xtag){ tmpArr[2]=bpos+bint[inputArr[++i]]; }else{ tmpArr[2]=rb62x[inputArr[i]]; }
+								c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4);
+								c1 = ((tmpArr[1] << 4) & 0xf0) | tmpArr[2];
+								op[m] = (byte)c0;
+								op[++m] = (byte)c1;
+							}
 							break;
 
 						default:
-							if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }else{ tmpArr[0]=rb62x[inputArr[i]]; }
-							if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }else{ tmpArr[1]=rb62x[inputArr[i]]; }
-							if(inputArr[++i]==xtag){ tmpArr[2]=bpos+bint[inputArr[++i]]; }else{ tmpArr[2]=rb62x[inputArr[i]]; }
-							if(inputArr[++i]==xtag){ tmpArr[3]=bpos+bint[inputArr[++i]]; }else{ tmpArr[3]=rb62x[inputArr[i]]; }
-							c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4); 
-							c1 = ((tmpArr[1] << 4) & 0xf0) | (tmpArr[2] >> 2); 
-							c2 = ((tmpArr[2] << 6) & 0xff) | tmpArr[3];
-							op[m] = (byte)c0;
-							op[++m] = (byte)c1;
-							op[++m] = (byte)c2;
+							if(i < last8){
+								if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }else{ tmpArr[0]=rb62x[inputArr[i]]; }
+								if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }else{ tmpArr[1]=rb62x[inputArr[i]]; }
+								if(inputArr[++i]==xtag){ tmpArr[2]=bpos+bint[inputArr[++i]]; }else{ tmpArr[2]=rb62x[inputArr[i]]; }
+								if(inputArr[++i]==xtag){ tmpArr[3]=bpos+bint[inputArr[++i]]; }else{ tmpArr[3]=rb62x[inputArr[i]]; }
+								c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4); 
+								c1 = ((tmpArr[1] << 4) & 0xf0) | (tmpArr[2] >> 2); 
+								c2 = ((tmpArr[2] << 6) & 0xff) | tmpArr[3];
+								op[m] = (byte)c0;
+								op[++m] = (byte)c1;
+								op[++m] = (byte)c2;
+							}
+							else{
+								if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }else{ tmpArr[0]=rb62x[inputArr[i]]; }
+								if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }else{ tmpArr[1]=rb62x[inputArr[i]]; }
+								if(i == maxidx){
+									c0 = (tmpArr[0] << 2) | tmpArr[1];
+									op[m] = (byte)c0;
+								}
+								else{
+									if(inputArr[++i]==xtag){ tmpArr[2]=bpos+bint[inputArr[++i]]; }else{ tmpArr[2]=rb62x[inputArr[i]]; }
+									if(i == maxidx){
+										c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4);
+										c1 = ((tmpArr[1] << 4) & 0xf0) | tmpArr[2];
+										op[m] = (byte)c0;
+										op[++m] = (byte)c1;
+									}
+									else
+									{
+										if(inputArr[++i]==xtag){ tmpArr[3]=bpos+bint[inputArr[++i]]; }else{ tmpArr[3]=rb62x[inputArr[i]]; }
+										c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4); 
+										c1 = ((tmpArr[1] << 4) & 0xf0) | (tmpArr[2] >> 2); 
+										c2 = ((tmpArr[2] << 6) & 0xff) | tmpArr[3];
+										op[m] = (byte)c0;
+										op[++m] = (byte)c1;
+										op[++m] = (byte)c2;
+									}
+								}
+
+							}
 					}
-					//System.out.println("0:["+tmpArr[0]+"] 1:["+tmpArr[1]+"] 2:["+tmpArr[2]+"] 3:["+tmpArr[3]+"]");
 					m++;
 				}
 				while(++i < inputlen);				
 			}
 			byte[] op2 = new byte[m];
-			System.arraycopy(op, 0, op2, 0, m);
-			osb.append(new String(op2));
+			System.arraycopy(op, 0, op2, 0, m);	
+			osb.append(new String(op2)); //, StandardCharsets.UTF_8
 		}
 
 		return osb.toString();
@@ -315,7 +358,6 @@ public static final class Base62x{
 				//- omit x1, x2, x3	
 			}
 			else{
-				//System.out.println("fillRb62x: i:["+i+"] b62:["+b62x[i]+"] chari:["+((char)i)+"]");
 				rb62x[b62x[i]] = i;	
 			}
 		}
@@ -351,14 +393,6 @@ public static final class Base62x{
 		else if(codetype == 1 && inputArr[inputlen-1] == xtag){
 			isasc = true;
 		}
-		/*
-		for(int i=0; i<inputlen; i++){
-			System.out.println("Base62x.setAscii: input["+i+"]:["+inputArr[i]+"] char:["
-				+((char)(inputArr[i]))+"]");	
-		}
-		System.out.println("Base62x.setAscii: input:["+(new String(inputArr))+"] codetype:["
-			+codetype+"] last-char:["+inputArr[inputlen-1]+"] -2:["+inputArr[inputlen-2]+"] xtag:["+xtag+"]");
-		*/
 		rethm.put("isasc", isasc);
 
 		if(isasc){
@@ -410,7 +444,9 @@ public static final class Base62x{
 	//- Dec 01, 2016
 	private static byte[] _decodeByLength(int[] tmpArr, byte[] op, int m){
 		byte[] rtn = op;
-		
+
+		//- @todo replace ArrayIndexOutOfBoundsException and variable tmpArr in decode	
+
 		rtn[m++] = (byte)m; //- ?
 		return rtn;
 	}

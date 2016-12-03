@@ -39,6 +39,16 @@ foreach($sArr as $k=>$v){
 	print "\n$s enc:[".$enc."] dec:[$dec]";
 }
 
+$enc = "a123bc45";
+$s = Base62x::decode($enc);
+$enc2 = Base62x::encode($s);
+if($enc == $enc2){
+	print __FILE__.": enc:$enc enc2:$enc2 succ.";	
+}
+else{
+	print __FILE__.": enc:$enc enc2:$enc2 fail.";	
+}
+
 /*
 
 $s = "abcd1234";
