@@ -55,7 +55,7 @@ int faili2 = 0;
 String s_enc2;
 String s_dec2;
 int xcount = 0;
-int testcount = 100000;
+int testcount = 3000000;
 for(i=0; i<testcount; i++){
     s = Integer.toHexString(rd.nextInt(999999999)) 
     	+ "中a3" + Integer.toHexString(rd.nextInt(9999999)) 
@@ -67,7 +67,8 @@ for(i=0; i<testcount; i++){
     s_enc = Base62x.encode(s); //  + ""; // "a1b2x1x2x3x1"; "a1b2x1";
     //out.println("<br/>s:["+s+"] s_enc:["+s_enc+"]");
     if(s_enc.indexOf("x") > -1){
-    	out.println("<br/> "+i+"/"+(xcount++)+" ---- s:["+s+"] s_enc:["+s_enc+"] found tag x.");
+    	xcount++;
+    	//out.println("<br/> "+i+"/"+(xcount++)+" ---- s:["+s+"] s_enc:["+s_enc+"] found tag x.");
     }
     //s_enc = "yyx2x14Ex2x3lUx2x3lM543x1";
     s_dec = Base62x.decode(s_enc); //- s_enc
@@ -104,8 +105,9 @@ for(i=0; i<testcount; i++){
         System.out.println("i:["+i+"] enc_s:["+s_enc+"] dec_s:["+s_dec+"] len:"+s.length()+" s_enc2:["+s_enc2+"] s_dec2:["+s_dec2
         	+"] len:"+s_dec2.length()+" error3!");
     }
-    if(i%100 == 0){
+    if(i%1000 == 0){
         System.out.println((new java.util.Date())+": "+"i:["+i+"] s:["+s+"] s_dec:["+s_dec+"] s_enc:["+s_enc+"] go!");
+        out.println((new java.util.Date())+": "+"i:["+i+"]<br/>");
     }
 }
 
