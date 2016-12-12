@@ -265,7 +265,7 @@ public static final class Base62x{
 						case 3: 
 							if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }else{ tmpArr[0]=rb62x[inputArr[i]]; }
 							if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }else{ tmpArr[1]=rb62x[inputArr[i]]; }
-							if(i == inputlen - 1){
+							if(i == maxidx){
 								c0 = (tmpArr[0] << 2) | tmpArr[1];
 								op[m] = (byte)c0;
 							}

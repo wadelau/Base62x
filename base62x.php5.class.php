@@ -11,7 +11,7 @@
  * bugfix, 13:39 13 September 2016
  * bugfix, Thu Sep 29 04:06:26 UTC 2016
  * imprvs on numeric conversion, Fri Oct  7 03:42:59 UTC 2016
- * this version work compatible with php 5.x
+ * bugifx by _decodeByLength, 20:40 28 November 2016
  */
 
 
@@ -28,13 +28,12 @@ class Base62x {
 	const DECD = "-dec";
 	const DEBG = "-v";
 	const CVTN = "-n";
-	var  b62x = array();
+	static b62x = array(); 
 	const bpos = 60; # 0-60 chars
 	const xpos = 64; # b62x[64] = 'x'
 	static $rb62x = array();
 	const ascmax = 127;
-	var asclist = array(); # 58 
-	
+	static asclist = array();	
 	var $ascidx = array();
 	var $ascrlist = array();
 	const max_safe_base = 36;
@@ -47,6 +46,9 @@ class Base62x {
 	public static function encode($input, $ibase=null){
 		
 		$output = null;
+		if($input == null || $input == ''){
+			return $input;
+		}
 
 		$codetype = 0;
 		$xtag = self::XTAG;
@@ -55,11 +57,13 @@ class Base62x {
 		'O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b',
 		'c','d','e','f','g','h','i','j','k','l','m','n','o','p',
 		'q','r','s','t','u','v','w','y','z','1','2','3','x');
-		$asclist = array('4','5','6','7','8','9', '0',
+  		# self::b62x;
+		$asclist =  array('4','5','6','7','8','9', '0',
 		'A','B','C','D','E','F','G','H','I','J','K','L','M','N',
 		'O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b',
 		'c','d','e','f','g','h','i','j','k','l','m','n','o','p',
-		'q','r','s','t','u','v','w','y','z');
+		'q','r','s','t','u','v','w','y','z'); # 58 
+ 		# self::asclist;
 		$bpos = self::bpos;
 		$xpos = self::xpos;
 		$ascmax = self::ascmax;
@@ -157,6 +161,9 @@ class Base62x {
 	public static function decode($input, $obase=null){
 		
 		$output = "";
+		if($input == null || $input == ''){
+			return $input;
+		}
 
 		$codetype = 1;
 		$xtag = self::XTAG;
@@ -165,11 +172,13 @@ class Base62x {
 		'O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b',
 		'c','d','e','f','g','h','i','j','k','l','m','n','o','p',
 		'q','r','s','t','u','v','w','y','z','1','2','3','x');
-		$asclist = array('4','5','6','7','8','9', '0',
+  		# self::b62x;
+		$asclist =  array('4','5','6','7','8','9', '0',
 		'A','B','C','D','E','F','G','H','I','J','K','L','M','N',
 		'O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b',
 		'c','d','e','f','g','h','i','j','k','l','m','n','o','p',
-		'q','r','s','t','u','v','w','y','z');
+		'q','r','s','t','u','v','w','y','z'); # 58 
+ 		# self::asclist;
 		$bpos = self::bpos;
 		$xpos = self::xpos;
 		$ascmax = self::ascmax;
@@ -219,7 +228,8 @@ class Base62x {
 				$tmpArr = array();
 				$bint = array('1'=>1, '2'=>2, '3'=>3);
 				do{
-					$tmpArr = array('\0', '\0', '\0', '\0');
+					#$tmpArr = array('\0', '\0', '\0', '\0');
+					$tmpArr = array(null, null, null, null);
 					$remaini = $inputlen - $i;
 					$k = 0; # what for?
 					switch($remaini){
@@ -232,8 +242,13 @@ class Base62x {
 							else{$tmpArr[0] = $rb62x[$inputArr[$i]]; }
 							if($inputArr[++$i] == $xtag){ $tmpArr[1] = $bpos + $bint[$inputArr[++$i]]; }
 							else{$tmpArr[1] = $rb62x[$inputArr[$i]]; }
-							$c0 = $tmpArr[0] << 2 | $tmpArr[1];
-							$op[$m] = chr($c0);
+							/*
+							 $c0 = $tmpArr[0] << 2 | $tmpArr[1];
+							 $op[$m] = chr($c0);
+							 */
+							$arr = self::_decodeByLength($tmpArr, $op, $m);
+							$op = $arr[0];
+							$m = $arr[1];
 							break;	
 
 						case 3:
@@ -243,10 +258,15 @@ class Base62x {
 							else{$tmpArr[1] = $rb62x[$inputArr[$i]]; }
 							if($inputArr[++$i] == $xtag){ $tmpArr[2] = $bpos + $bint[$inputArr[++$i]]; }
 							else{$tmpArr[2] = $rb62x[$inputArr[$i]]; }
-							$c0 = $tmpArr[0] << 2 | $tmpArr[1] >> 4;
-							$c1 = (($tmpArr[1] << 4) & 0xf0) | $tmpArr[2];
-							$op[$m] = chr($c0);
-							$op[++$m] = chr($c1);
+							/*
+							 $c0 = $tmpArr[0] << 2 | $tmpArr[1] >> 4;
+							 $c1 = (($tmpArr[1] << 4) & 0xf0) | $tmpArr[2];
+							 $op[$m] = chr($c0);
+							 $op[++$m] = chr($c1);
+							 */
+							$arr = self::_decodeByLength($tmpArr, $op, $m);
+							$op = $arr[0];
+							$m = $arr[1];
 							break;
 
 						default:
@@ -258,12 +278,17 @@ class Base62x {
 							else{$tmpArr[2] = $rb62x[$inputArr[$i]]; }
 							if($inputArr[++$i] == $xtag){ $tmpArr[3] = $bpos + $bint[$inputArr[++$i]]; }
 							else{$tmpArr[3] = $rb62x[$inputArr[$i]]; }
-							$c0 = $tmpArr[0] << 2 | $tmpArr[1] >> 4;
-							$c1 = (($tmpArr[1] << 4) & 0xf0) | ($tmpArr[2] >> 2);
-							$c2 = (($tmpArr[2] << 6) & 0xff) | $tmpArr[3];
-							$op[$m] = chr($c0);
-							$op[++$m] = chr($c1);
-							$op[++$m] = chr($c2);	
+							/*
+							 $c0 = $tmpArr[0] << 2 | $tmpArr[1] >> 4;
+							 $c1 = (($tmpArr[1] << 4) & 0xf0) | ($tmpArr[2] >> 2);
+							 $c2 = (($tmpArr[2] << 6) & 0xff) | $tmpArr[3];
+							 $op[$m] = chr($c0);
+							 $op[++$m] = chr($c1);
+							 $op[++$m] = chr($c2);
+							 */
+							$arr = self::_decodeByLength($tmpArr, $op, $m);
+							$op = $arr[0];
+							$m = $arr[1];
 					}
 					$m++;
 				}
@@ -422,7 +447,34 @@ class Base62x {
 
 	}
 
-
+	//- decode with x1, x2, x3
+	//- Mon Nov 28 17:47:45 CST 2016
+	private static function _decodeByLength($tmpArr, $op, $m){
+	    $rtn = $op;
+	    if($tmpArr[3] !== null){
+	        $c0 = $tmpArr[0] << 2 | $tmpArr[1] >> 4;
+	        $c1 = (($tmpArr[1] << 4) & 0xf0) | ($tmpArr[2] >> 2);
+	        $c2 = (($tmpArr[2] << 6) & 0xff) | $tmpArr[3];
+	        $op[$m] = chr($c0);
+	        $op[++$m] = chr($c1);
+	        $op[++$m] = chr($c2);
+	    }
+	    else if($tmpArr[2] !== null){
+	        $c0 = $tmpArr[0] << 2 | $tmpArr[1] >> 4;
+	        $c1 = (($tmpArr[1] << 4) & 0xf0) | $tmpArr[2];
+	        $op[$m] = chr($c0);
+	        $op[++$m] = chr($c1);
+	    }
+	    else if($tmpArr[1] !== null){
+	        $c0 = $tmpArr[0] << 2 | $tmpArr[1];
+	        $op[$m] = chr($c0);
+	    }
+	    else{
+	        $c0 = chr($tmpArr[0]);
+	        $op[$m] = chr($c0);
+	    }
+	    return array($rtn=$op, $m);
+	}
 }
 
 ?>

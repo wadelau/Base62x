@@ -23,15 +23,10 @@ shell>./base62x
 
 Usage: ./base62x [-v] [-n <2|8|10|16|32>] <-enc|dec> string
 
-Version: 0.70
+Version: 0.90
 
-shell>./base62x -enc "abc! \" # $ % & 中文chn"
+shell> mi=0; umi=0; for i in {1..10000}; do r=`cat /dev/urandom|tr -dc 'a-zA-Z0-9'|fold -w 16|head -n 1`; r2=`cat /dev/urandom|tr -dc 'a-zA-Z0-9'|fold -w 16|head -n 1`; a="$r中文时间a$r2"; b=`./base62x -enc $a`; c=`./base62x -dec $b`; if [ "$a" == "$c" ]; then d="matched";mi=`expr $mi + 1`;else d="unmatched"; umi=`expr $umi + 1`; fi; echo -e "a=$a b="$b" c="$c" d="$d" mi="$mi" umi="$umi"\n"; done
 
-OM9Z8I0Y82CW920b82OWvBYjvfQ7OsXk
-
-shell>./base62x -dec "OM9Z8I0Y82CW920b82OWvBYjvfQ7OsXk"
-
-abc! " # $ % & 中文chn
 
 # Base62x in -PHP
 
@@ -68,19 +63,6 @@ print "[$s3_enc] decoded:[".($s3_dec=Base62x::decode($s3_enc))."]\n";
 
 ?>
 ```
-Output of base62x_test.php:
-
-[abcd1234] encoded:[abcd1234x]
-
-[abcd1234x] decoded:[abcd1234]
-
-[abc中文123] encoded:[OM9ZvBYjvfQ7CJ8p]
-
-[OM9ZvBYjvfQ7CJ8p] decoded:[abc中文123]
-
-["Tcler's Wiki: UTF-8 bit by bit (Revision 6)". 2009-04-25. Retrieved 2009-05-22.In orthodox UTF-8, a NUL byte (\x00) is represented by a NUL byte. […] But […] we […] want NUL bytes inside […] strings […] | ① ② ③ ④ ⑤ ⑥ ⑦ |  Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅷ Ⅸ Ⅹ | !  # $ % & ' ( ) * + , - . /] encoded:[8bHZR6Lo9tCWLsbhQJeWLLH6BJWWOcbq869v869fT20eKcLsQNDfRsuWDYaYBY0oC30vBJ0qBJ8rBY1IPNHoQMLsPMGWCZ0mEIqmDIqoCYv9RY1lSdHeRsHlU21LL4OjE2mWOI1ELKmWOdbqPI0eN7WmC2aWQNCWScLmScLpPMvqPMGWOdaWOI1ELKmWOdbqPIuWMx2A0fbqWGdLq85lYWAPT87Tb85lYWAPT87TXRdGWJbLC869vT6Lp86bkSsbaPI1Rue2cNI1pT79fRcTp85lYWAPT87mWuf6W8EAHeI3YaQ8Wuf6Z8EAHf23YaQKWuf6c87mW8EA5e23YXQ4WueMY8EA5eo3YXQGWueMb8EA5fY3YXQSWueMe8EA5gI1z824W82CW920b82OW9o0e82aWAY0h82mWBI0k82F]
-
-[8bHZR6Lo9tCWLsbhQJeWLLH6BJWWOcbq869v869fT20eKcLsQNDfRsuWDYaYBY0oC30vBJ0qBJ8rBY1IPNHoQMLsPMGWCZ0mEIqmDIqoCYv9RY1lSdHeRsHlU21LL4OjE2mWOI1ELKmWOdbqPI0eN7WmC2aWQNCWScLmScLpPMvqPMGWOdaWOI1ELKmWOdbqPIuWMx2A0fbqWGdLq85lYWAPT87Tb85lYWAPT87TXRdGWJbLC869vT6Lp86bkSsbaPI1Rue2cNI1pT79fRcTp85lYWAPT87mWuf6W8EAHeI3YaQ8Wuf6Z8EAHf23YaQKWuf6c87mW8EA5e23YXQ4WueMY8EA5eo3YXQGWueMb8EA5fY3YXQSWueMe8EA5gI1z824W82CW920b82OW9o0e82aWAY0h82mWBI0k82F] decoded:["Tcler's Wiki: UTF-8 bit by bit (Revision 6)". 2009-04-25. Retrieved 2009-05-22.In orthodox UTF-8, a NUL byte (\x00) is represented by a NUL byte. […] But […] we […] want NUL bytes inside […] strings […] | ① ② ③ ④ ⑤ ⑥ ⑦ |  Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅷ Ⅸ Ⅹ | !  # $ % & ' ( ) * + , - . /]
 
 # Base62x in -Java
 
@@ -138,21 +120,6 @@ out.println("<br/><br/>Time:["+(new Date())+"] "+((new java.util.Random()).nextI
 %>
 ```
 
-Output of base62x_test.jsp:
-
-[abcd1234] encoded:[abcd1234x] 
-
-[abcd1234x] decoded:[abcd1234] 
-
-[abc中文123] encoded:[OM9ZvBYjvfQ7CJ8p] 
-
-[OM9ZvBYjvfQ7CJ8p] decoded:[abc中文123] 
-
-["Tcler's Wiki: UTF-8 bit by bit (Revision 6)". 2009-04-25. Retrieved 2009-05-22.In orthodox UTF-8, a NUL byte (\x00)is represented by a NUL byte. […] But […] we […] want NUL bytes inside […] strings […] | ① ② ③ ④ ⑤ ⑥ ⑦ | Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅷ Ⅸ Ⅹ | ! # $ % & ' ( ) * + , - . /] encoded:[8bHZR6Lo9tCWLsbhQJeWLLH6BJWWOcbq869v869fT20eKcLsQNDfRsuWDYaYBY0oC30vBJ0qBJ8rBY1IPNHoQMLsPMGWCZ0mEIqmDIqoCYv9RY1lSdHeRsHlU21LL4OjE2mWOI1ELKmWOdbqPI0eN7WmC2bfSo1oPN1oPNDbRdHbP21YUI1X84vLJ21YUNHbBY1Rue2cNI12TNGWMx2A0fbqWTsKWMx2A0fbqWTs5kT21ELKmWOdbqPNCWQMvpQMHb85lYWAPT87DqScbkPtCWMx2A0fbqWV23YaQ0Wuf6X8EAHeY3YaQCWuf6a8EAHfI3YaQOWV23YXQ0WueMX8EA5eY3YXQCWueMa8EA5fI3YXQOWueMd8EA5g23YXQaWV20X82CW920b82OW9o0e82aWAY0h82mWBI0k82F]
-
-[8bHZR6Lo9tCWLsbhQJeWLLH6BJWWOcbq869v869fT20eKcLsQNDfRsuWDYaYBY0oC30vBJ0qBJ8rBY1IPNHoQMLsPMGWCZ0mEIqmDIqoCYv9RY1lSdHeRsHlU21LL4OjE2mWOI1ELKmWOdbqPI0eN7WmC2bfSo1oPN1oPNDbRdHbP21YUI1X84vLJ21YUNHbBY1Rue2cNI12TNGWMx2A0fbqWTsKWMx2A0fbqWTs5kT21ELKmWOdbqPNCWQMvpQMHb85lYWAPT87DqScbkPtCWMx2A0fbqWV23YaQ0Wuf6X8EAHeY3YaQCWuf6a8EAHfI3YaQOWV23YXQ0WueMX8EA5eY3YXQCWueMa8EA5fI3YXQOWueMd8EA5g23YXQaWV20X82CW920b82OW9o0e82aWAY0h82mWBI0k82F] decoded:["Tcler's Wiki: UTF-8 bit by bit (Revision 6)". 2009-04-25. Retrieved 2009-05-22.In orthodox UTF-8, a NUL byte (\x00)is represented by a NUL byte. […] But […] we […] want NUL bytes inside […] strings […] | ① ② ③ ④ ⑤ ⑥ ⑦ | Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅷ Ⅸ Ⅹ | ! # $ % & ' ( ) * + , - . /] 
-
-Time:[Sun Aug 14 22:00:45 CST 2016] 515373
 
 # Base62x in -Perl
 
