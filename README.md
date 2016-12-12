@@ -100,8 +100,10 @@ response.setContentType("text/html;charset=utf-8");
 
 String s = "abcd1234";
 String s2 = "abc中文123";
-String s3 = "\"Tcler's Wiki: UTF-8 bit by bit (Revision 6)\". 2009-04-25. Retrieved 2009-05-22.In orthodox UTF-8, a NUL byte (\\x00)"
-	+ "is represented by a NUL byte. […] But […] we […] want NUL bytes inside […] strings […] | ① ② ③ ④ ⑤ ⑥ ⑦ "
+String s3 = "\"Tcler's Wiki: UTF-8 bit by bit (Revision 6)\". 2009-04-25. Retrieved 2009-05-22."
+	+ "In orthodox UTF-8, a NUL byte (\\x00)"
+	+ "is represented by a NUL byte. […] But […] we […] want NUL bytes inside […] strings […] "
+	+ "| ① ② ③ ④ ⑤ ⑥ ⑦ "
 	+ "| Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅷ Ⅸ Ⅹ | ! # $ % & ' ( ) * + , - . /";
 
 String s_enc, s_dec, s2_enc, s2_dec, s3_enc, s3_dec;
