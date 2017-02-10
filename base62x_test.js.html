@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Base62x in JavaScript Test</title>
+	<script src="./Base62x.class.js"></script>
+</head>
+<body>
+<div id="contentid">
+	Base62x in JavaScript Test: <br/><br/>
+	
+</div>
+</body>
+<script>
+var divid = 'contentid';
+var s = 'abcd1234@'+(new Date())+'@'+Math.ceil(Math.random()*100000);
+//- static invoke
+var encs = Base62x.encode(s);
+var decs = Base62x.decode(encs);
+var wobj = document.getElementById(divid);
+var ostr = '';
+if(wobj){
+	ostr = wobj.innerHTML;
+	ostr += "Time: "+(new Date())+"<br/>";
+	ostr += "<br/>s:["+s+"]<br/>encs:["+encs+"]<br/>decs:["+decs+"]";
+	wobj.innerHTML = ostr;
+}
+else{
+	console.log("target object:["+divid+"] failed.");
+}
+//- instance invoke
+var mybase62x = new Base62x();
+ostr += "<br/><br/>i:["+mybase62x.i+"] isdebug:["+mybase62x.isdebug+"]";
+encs = mybase62x.encode(s);
+ostr += "<br/>enc:["+encs+"]";
+wobj.innerHTML = ostr;
+wobj = null;
+ostr = null;
+</script>
+</html>
