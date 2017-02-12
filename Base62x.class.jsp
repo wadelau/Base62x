@@ -246,7 +246,7 @@ public static final class Base62x{
 					tmpArr = new int[4];
 					switch(remaini){
 						case 1:
-							System.out.println("Base62x.decode: found illegal base62x input:["+input+"]. 1608091042.");
+							System.out.println("Base62x.decode: illegal base62x input:["+input+"]. 1608091042.");
 							break;
 
 						case 2:
@@ -306,8 +306,7 @@ public static final class Base62x{
 										op[m] = (byte)c0;
 										op[++m] = (byte)c1;
 									}
-									else
-									{
+									else{
 										if(inputArr[++i]==xtag){ tmpArr[3]=bpos+bint[inputArr[++i]]; }else{ tmpArr[3]=rb62x[inputArr[i]]; }
 										c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4); 
 										c1 = ((tmpArr[1] << 4) & 0xf0) | (tmpArr[2] >> 2); 

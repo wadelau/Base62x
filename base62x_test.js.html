@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset='utf-8'>
 	<title>Base62x in JavaScript Test</title>
 	<script src="./Base62x.class.js"></script>
 </head>
 <body>
 <div id="contentid">
-	Base62x in JavaScript Test: <br/><br/>
+	Base62x in JavaScript Test/中文: <br/><br/>
 	
 </div>
 </body>
 <script>
 var divid = 'contentid';
-var s = 'abcd1234@'+(new Date())+'@'+Math.ceil(Math.random()*100000);
+var s = 'abcd1234@北京'+(new Date())+'@'+Math.ceil(Math.random()*100000)+'x';
 //- static invoke
 var encs = Base62x.encode(s);
 var decs = Base62x.decode(encs);
@@ -21,7 +22,7 @@ var ostr = '';
 if(wobj){
 	ostr = wobj.innerHTML;
 	ostr += "Time: "+(new Date())+"<br/>";
-	ostr += "<br/>s:["+s+"]<br/>encs:["+encs+"]<br/>decs:["+decs+"]";
+	ostr += "<br/>orgs:["+s+"]<br/>encs:["+encs+"]<br/>decs:["+decs+"]";
 	wobj.innerHTML = ostr;
 }
 else{
@@ -29,9 +30,11 @@ else{
 }
 //- instance invoke
 var mybase62x = new Base62x();
-ostr += "<br/><br/>i:["+mybase62x.i+"] isdebug:["+mybase62x.isdebug+"]";
+ostr += "<br/><br/>instanceOf: <br/>i:["+mybase62x.i+"] isdebug:["+mybase62x.isdebug+"]";
 encs = mybase62x.encode(s);
+decs = mybase62x.decode(s);
 ostr += "<br/>enc:["+encs+"]";
+ostr += "<br/>dec:["+decs+"]";
 wobj.innerHTML = ostr;
 wobj = null;
 ostr = null;

@@ -213,14 +213,14 @@ class Base62x {
 				while(++$i < $inputlen);
 			}
 			else{
-				$c0 = 0; $c1 = 0; $c2 = 0;
+				//$c0 = 0; $c1 = 0; $c2 = 0;
 				$tmpArr = array();
 				$bint = array('1'=>1, '2'=>2, '3'=>3);
 				do{
 					#$tmpArr = array('\0', '\0', '\0', '\0');
 					$tmpArr = array(null, null, null, null);
 					$remaini = $inputlen - $i;
-					$k = 0; # what for?
+					//$k = 0; # what for?
 					switch($remaini){
 						case 1:
 							error_log(__FILE__.": found illegal base62x input:[".$inputArr[$i]."]. 1608091042.");
@@ -422,6 +422,7 @@ class Base62x {
 	//- Mon Nov 28 17:47:45 CST 2016
 	private static function _decodeByLength($tmpArr, $op, $m){
 	    $rtn = $op;
+		$c0 = 0; $c1 = 0; $c2 = 0;
 	    if($tmpArr[3] !== null){
 	        $c0 = $tmpArr[0] << 2 | $tmpArr[1] >> 4;
 	        $c1 = (($tmpArr[1] << 4) & 0xf0) | ($tmpArr[2] >> 2);
@@ -441,7 +442,7 @@ class Base62x {
 	        $op[$m] = chr($c0);
 	    }
 	    else{
-	        $c0 = chr($tmpArr[0]);
+	        $c0 = $tmpArr[0];
 	        $op[$m] = chr($c0);
 	    }
 	    return array($rtn=$op, $m);
