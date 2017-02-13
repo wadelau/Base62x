@@ -13,9 +13,12 @@
 </body>
 <script>
 var divid = 'contentid';
-var s = 'abcd1234@北京'+(new Date())+'@'+Math.ceil(Math.random()*100000)+'x';
+var randi = Math.ceil(Math.random()*100);
+var s = randi+'abcd'+(randi*randi)+'1234@'+(randi%2==0?'中國-文化-源遠流長'+randi+':：:':randi)+(new Date())+'@'+Math.ceil(Math.random()*100000);
+//s = '/编号OfferId↿⇂网盟↿⇂标题↿⇂PKG名称↿⇂国家↿⇂收入↿⇂状态↿⇂来源Id↿⇂更新时间↿⇂~~~~~~~~~~~~~~~~~~~~~~~~~~~ 1 / 10063015 ▾10063015yeahmobi_marianaJAJU[자주] - 내가 주인인 삶com.jaju.mobile|KR:0.850.00000上线29892292017-02-13 17:23:47 2 / 10063014 ▾10063014yeahmobi_marianahayu – reality TV on demandcom.upst.hayu|AU:1.620.00000上线29892432017-02-13 17:23:45/';
 //- static invoke
 var encs = Base62x.encode(s);
+//encs = 'CZXXOcDaDpWqCJ8pD43akAtbd8ijvfQ7vOoMBUQwaEc1eEQrWUcLjp8uEkx2zcZfDRsuWHcLY834p838mCJSWCJWwC3OwCpCWHqrKAp0uC30WA4DeQMvX85DqOMvaON9a85HfRMKfG3GuCJOv';
 var decs = Base62x.decode(encs);
 var wobj = document.getElementById(divid);
 var ostr = '';
@@ -34,7 +37,7 @@ ostr += "<br/><br/>instanceOf: <br/>i:["+mybase62x.i+"] isdebug:["+mybase62x.isd
 encs = mybase62x.encode(s);
 decs = mybase62x.decode(s);
 ostr += "<br/>enc:["+encs+"]";
-ostr += "<br/>dec:["+decs+"]";
+ostr += "<br/>dec:["+decs+"] 中文:["+String.fromCharCode(20013)+"]";
 wobj.innerHTML = ostr;
 wobj = null;
 ostr = null;
