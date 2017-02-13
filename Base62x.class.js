@@ -257,15 +257,17 @@
 		 var rtn = undefined;
 		 var xtag = this.get('xtag');
 		 //console.log('encode: isdebug:['+this.constructor.isdebug+']'); // unsupported, cannot be called inside class
-		 console.log('encode: s:['+input+'] xtag:['+xtag+']');
-		 
+		 //console.log('encode: s:['+input+'] xtag:['+xtag+']');
+		 rtn = Base62x.encode(input, ibase);
 		 return rtn;
 	 }
 	 
 	 //- decode with instanceof
-	 decode (input, ibase){
+	 decode (input, obase){
 		 var rtn = undefined;
-		 
+		 var xtag = this.get('xtag');
+		 //console.log('decode: s:['+input+'] xtag:['+xtag+']');
+		 rtn = Base62x.decode(input, obase);
 		 return rtn;
 	 }
 	 

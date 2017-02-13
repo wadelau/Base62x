@@ -35,9 +35,9 @@ else{
 var mybase62x = new Base62x();
 ostr += "<br/><br/>instanceOf: <br/>i:["+mybase62x.i+"] isdebug:["+mybase62x.isdebug+"]";
 encs = mybase62x.encode(s);
-decs = mybase62x.decode(s);
-ostr += "<br/>enc:["+encs+"]";
-ostr += "<br/>dec:["+decs+"] 中文:["+String.fromCharCode(20013)+"]";
+decs = mybase62x.decode(encs);
+ostr += "<br/>encs:["+encs+"]";
+ostr += "<br/>decs:["+decs+"]";
 wobj.innerHTML = ostr;
 wobj = null;
 ostr = null;

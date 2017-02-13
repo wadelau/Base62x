@@ -298,9 +298,6 @@ class Base62x {
 				$onum = $onum + $tmpi * pow($ibase, ($i - $xnum));	
 				#error_log(__FILE__.": xx2dec i:$i c:".$iArr[$i]." onum:$onum");
 			}
-			#$onum = sprintf("%u", $onum);
-			#$onum = number_format($onum, 0, '', '');
-			#$onum = (int)$onum;
 			if(strpos($onum, 'E') !== false){
 				error_log(__FILE__.": Base62x::xx2dec: lost precision due to too large number:[$onum]. consider using bc math. 1610072145.");
 				$onum = number_format($onum);	
