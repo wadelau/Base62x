@@ -21,6 +21,8 @@
  *  bugfix by decodeByLength, Sat Dec  3 23:05:58 CST 2016
  */
 
+ //- Assume We Are in Charset of UTF-8 Runtime
+ 
 public static final class Base62x{
 
 	//- variables
@@ -53,12 +55,12 @@ public static final class Base62x{
 
 	private static int[] ascidx = new int[ascmax + 1];
 	private static byte[] ascrlist = new byte[ascmax + 1];
-
-	private static final double ver = 0.70;
+	private static final int max_safe_base = 36; //- 17:56 14 February 2017
+	private static final double ver = 0.80;
 
 
 	//- contructors
-
+	//- @todo
 
 	//- methods
 
@@ -84,7 +86,7 @@ public static final class Base62x{
 		
 		if(isnum){
 			//- numeric conversion
-			long num_input = Base62x.xx2dec(input, ibase, xpos, rb62x);
+			long num_input = Base62x.xx2dec(input, ibase, rb62x);
 			int obase = xpos;
 			osb.append(Base62x.dec2xx(num_input, obase, rb62x));
 		}
@@ -131,8 +133,10 @@ public static final class Base62x{
 						case 1:
 							c0 = tmpi >> 2;
 							c1 = ((tmpi << 6) & 0xff) >> 6;
-							if(c0>bpos){ op[m]=xtag; op[++m]=b62x[c0]; }else{ op[m]=b62x[c0]; }
-							if(c1>bpos){ op[++m]=xtag; op[++m]=b62x[c1]; }else{ op[++m]=b62x[c1]; }
+							if(c0>bpos){ op[m]=xtag; op[++m]=b62x[c0]; }
+							else{ op[m]=b62x[c0]; }
+							if(c1>bpos){ op[++m]=xtag; op[++m]=b62x[c1]; }
+							else{ op[++m]=b62x[c1]; }
 							break;
 
 						case 2:
@@ -140,9 +144,12 @@ public static final class Base62x{
 							c0 = tmpi >> 2;
 							c1 = (((tmpi << 6) & 0xff) >> 2) | (tmpj >> 4);
 							c2 = ((tmpj << 4) & 0xff) >> 4;
-							if(c0>bpos){ op[m]=xtag; op[++m]=b62x[c0]; }else{ op[m]=b62x[c0]; }
-							if(c1>bpos){ op[++m]=xtag; op[++m]=b62x[c1]; }else{ op[++m]=b62x[c1]; }
-							if(c2>bpos){ op[++m]=xtag; op[++m]=b62x[c2]; }else{ op[++m]=b62x[c2]; }
+							if(c0>bpos){ op[m]=xtag; op[++m]=b62x[c0]; }
+							else{ op[m]=b62x[c0]; }
+							if(c1>bpos){ op[++m]=xtag; op[++m]=b62x[c1]; }
+							else{ op[++m]=b62x[c1]; }
+							if(c2>bpos){ op[++m]=xtag; op[++m]=b62x[c2]; }
+							else{ op[++m]=b62x[c2]; }
 							i += 1;	
 							break;
 
@@ -153,10 +160,14 @@ public static final class Base62x{
 							c1 = (((tmpi << 6) & 0xff) >> 2) | (tmpj >> 4);
 							c2 = (((tmpj << 4) & 0xff) >> 2) | (tmpk >> 6);
 							c3 = ((tmpk << 2) & 0xff) >> 2;
-							if(c0>bpos){ op[m]=xtag; op[++m]=b62x[c0]; }else{ op[m]=b62x[c0]; }
-							if(c1>bpos){ op[++m]=xtag; op[++m]=b62x[c1]; }else{ op[++m]=b62x[c1]; }
-							if(c2>bpos){ op[++m]=xtag; op[++m]=b62x[c2]; }else{ op[++m]=b62x[c2]; }
-							if(c3>bpos){ op[++m]=xtag; op[++m]=b62x[c3]; }else{ op[++m]=b62x[c3]; }
+							if(c0>bpos){ op[m]=xtag; op[++m]=b62x[c0]; }
+							else{ op[m]=b62x[c0]; }
+							if(c1>bpos){ op[++m]=xtag; op[++m]=b62x[c1]; }
+							else{ op[++m]=b62x[c1]; }
+							if(c2>bpos){ op[++m]=xtag; op[++m]=b62x[c2]; }
+							else{ op[++m]=b62x[c2]; }
+							if(c3>bpos){ op[++m]=xtag; op[++m]=b62x[c3]; }
+							else{ op[++m]=b62x[c3]; }
 							i += 2;	
 					}
 					m++;
@@ -195,7 +206,7 @@ public static final class Base62x{
 		if(isnum){
 			//- numeric conversion
 			int ibase = xpos;
-			long num_input = Base62x.xx2dec(input, ibase, xpos, rb62x);
+			long num_input = Base62x.xx2dec(input, ibase, rb62x);
 			osb.append(Base62x.dec2xx(num_input, obase, rb62x));
 			//-  why a mediate number format is needed?
 		}
@@ -250,27 +261,32 @@ public static final class Base62x{
 							break;
 
 						case 2:
-							if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]];}else{ tmpArr[0]=rb62x[inputArr[i]]; }
+							if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }
+							else{ tmpArr[0]=rb62x[inputArr[i]]; }
 							if(i == maxidx){
 								c0 = (tmpArr[0] << 2);
 								op[m] = (byte)c0;
 							}
 							else{
-								if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]];}else{ tmpArr[1]=rb62x[inputArr[i]]; }
+								if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }
+								else{ tmpArr[1]=rb62x[inputArr[i]]; }
 								c0 = (tmpArr[0] << 2) | tmpArr[1];
 								op[m] = (byte)c0;
 							}
 							break;
 
 						case 3: 
-							if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }else{ tmpArr[0]=rb62x[inputArr[i]]; }
-							if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }else{ tmpArr[1]=rb62x[inputArr[i]]; }
+							if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }
+							else{ tmpArr[0]=rb62x[inputArr[i]]; }
+							if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }
+							else{ tmpArr[1]=rb62x[inputArr[i]]; }
 							if(i == maxidx){
 								c0 = (tmpArr[0] << 2) | tmpArr[1];
 								op[m] = (byte)c0;
 							}
 							else{
-								if(inputArr[++i]==xtag){ tmpArr[2]=bpos+bint[inputArr[++i]]; }else{ tmpArr[2]=rb62x[inputArr[i]]; }
+								if(inputArr[++i]==xtag){ tmpArr[2]=bpos+bint[inputArr[++i]]; }
+								else{ tmpArr[2]=rb62x[inputArr[i]]; }
 								c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4);
 								c1 = ((tmpArr[1] << 4) & 0xf0) | tmpArr[2];
 								op[m] = (byte)c0;
@@ -280,10 +296,14 @@ public static final class Base62x{
 
 						default:
 							if(i < last8){
-								if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }else{ tmpArr[0]=rb62x[inputArr[i]]; }
-								if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }else{ tmpArr[1]=rb62x[inputArr[i]]; }
-								if(inputArr[++i]==xtag){ tmpArr[2]=bpos+bint[inputArr[++i]]; }else{ tmpArr[2]=rb62x[inputArr[i]]; }
-								if(inputArr[++i]==xtag){ tmpArr[3]=bpos+bint[inputArr[++i]]; }else{ tmpArr[3]=rb62x[inputArr[i]]; }
+								if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }
+								else{ tmpArr[0]=rb62x[inputArr[i]]; }
+								if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }
+								else{ tmpArr[1]=rb62x[inputArr[i]]; }
+								if(inputArr[++i]==xtag){ tmpArr[2]=bpos+bint[inputArr[++i]]; }
+								else{ tmpArr[2]=rb62x[inputArr[i]]; }
+								if(inputArr[++i]==xtag){ tmpArr[3]=bpos+bint[inputArr[++i]]; }
+								else{ tmpArr[3]=rb62x[inputArr[i]]; }
 								c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4); 
 								c1 = ((tmpArr[1] << 4) & 0xf0) | (tmpArr[2] >> 2); 
 								c2 = ((tmpArr[2] << 6) & 0xff) | tmpArr[3];
@@ -292,14 +312,17 @@ public static final class Base62x{
 								op[++m] = (byte)c2;
 							}
 							else{
-								if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }else{ tmpArr[0]=rb62x[inputArr[i]]; }
-								if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }else{ tmpArr[1]=rb62x[inputArr[i]]; }
+								if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }
+								else{ tmpArr[0]=rb62x[inputArr[i]]; }
+								if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }
+								else{ tmpArr[1]=rb62x[inputArr[i]]; }
 								if(i == maxidx){
 									c0 = (tmpArr[0] << 2) | tmpArr[1];
 									op[m] = (byte)c0;
 								}
 								else{
-									if(inputArr[++i]==xtag){ tmpArr[2]=bpos+bint[inputArr[++i]]; }else{ tmpArr[2]=rb62x[inputArr[i]]; }
+									if(inputArr[++i]==xtag){ tmpArr[2]=bpos+bint[inputArr[++i]]; }
+									else{ tmpArr[2]=rb62x[inputArr[i]]; }
 									if(i == maxidx){
 										c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4);
 										c1 = ((tmpArr[1] << 4) & 0xf0) | tmpArr[2];
@@ -307,7 +330,8 @@ public static final class Base62x{
 										op[++m] = (byte)c1;
 									}
 									else{
-										if(inputArr[++i]==xtag){ tmpArr[3]=bpos+bint[inputArr[++i]]; }else{ tmpArr[3]=rb62x[inputArr[i]]; }
+										if(inputArr[++i]==xtag){ tmpArr[3]=bpos+bint[inputArr[++i]]; }
+										else{ tmpArr[3]=rb62x[inputArr[i]]; }
 										c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4); 
 										c1 = ((tmpArr[1] << 4) & 0xf0) | (tmpArr[2] >> 2); 
 										c2 = ((tmpArr[2] << 6) & 0xff) | tmpArr[3];
@@ -418,7 +442,7 @@ public static final class Base62x{
 	}
 
 	//-
-	private static long xx2dec(String input, int ibase, int xpos, int[] rb62x){
+	private static long xx2dec(String input, int ibase, int[] rb62x){
 	
 		long decnum = 0L;
 

@@ -8,6 +8,7 @@
  	https://ufqi.com/dev/base62x/?_via=-naturedns
  * v0.8, 21:49 12 February 2017
  */
+ 
  'use strict';
  //- Assume We Are in Charset of UTF-8 Runtime.
  
@@ -40,14 +41,14 @@
 		 var xpos = this.get('xpos');
 		 var ascidx = this.get('ascidx');
 		 var ascmax = this.get('ascmax');
-		 var max_safe_base = this.get('max_safe_base');
+		 //var max_safe_base = this.get('max_safe_base');
 		 //console.log('static encode: xtag:['+xtag+'] input:['+input+']');
 		 var rb62x = this.fillRb62x(b62x, bpos, xpos);
 		 var isnum = false;
-		 if(ibase > 0){ $isnum = true; }
+		 if(ibase > 0){ isnum = true; }
 		 if(isnum){
 			 rtn = 0;
-			 var num_input = this.xx2dec(input, ibase, max_safe_base, rb62x);
+			 var num_input = this.xx2dec(input, ibase, rb62x);
 			 var obase = xpos;
 			 rtn = this.dec2xx(num_input, obase, b62x);
 		 }
@@ -146,17 +147,18 @@
 		var xpos = this.get('xpos');
 		var ascidx = this.get('ascidx');
 		var ascmax = this.get('ascmax');
-		var max_safe_base = this.get('max_safe_base');
+		//var max_safe_base = this.get('max_safe_base');
 		//console.log('static decode: xtag:['+xtag+'] input:['+input+']');
 		var rb62x = this.fillRb62x(b62x, bpos, xpos);
 		var isnum = false;
-		if(obase > 0){ $isnum = true; }
+		if(obase > 0){ isnum = true; }
 		if(isnum){
 			rtn = 0;
 			var ibase = xpos;
-			var num_input = this.xx2dec(input, ibase, max_safe_base, rb62x);
+			var num_input = this.xx2dec(input, ibase, rb62x);
 			rtn = this.dec2xx(num_input, obase, b62x);
 			// why a medille num_input is needed?
+			// for double check?
 		}
 		else{
 			// string
@@ -401,16 +403,72 @@
 	 }
 	 
 	 //-
-	 static xx2dec(input, ibase, max_safe_base, rb62x){
+	 static xx2dec(input, ibase, rb62x){
 		 var rtn = 0;
-		 
+		 var obase = 10; var xtag = this.get('xtag');
+		 var bpos = this.get('bpos'); var max_safe_base = this.get('max_safe_base');
+		 if(ibase <= max_safe_base){
+			 rtn = parseInt(input+'', ibase|0).toString(obase|0); //http://locutus.io/php/math/base_convert/
+		 }
+		 else{
+			 var iArr = input.split('');
+			 var aLen = iArr.length;
+			 var xnum = 0; var tmpi = 0;
+			 iArr.reverse();
+			 for(var i=0; i<aLen; i++){
+				 if(iArr[i+1] == xtag){
+					 tmpi = bpos + rb62x[iArr[i]];
+					 xnum++;
+					 i++;
+				 }
+				 else{
+					 tmpi = rb62x[iArr[i]];
+				 }
+				 rtn += tmpi * Math.pow(ibase, (i-xnum));
+				 console.log('static xx2dec: i:['+i+'] chr:['+iArr[i]+'] rtn:['+rtn+']');
+			 }
+			 //- oversize check
+			 //- @todo			 
+		 }
+		 console.log('static xx2dec: in:['+input+'] ibase:['+ibase+'] rtn:['+rtn+'] in 10.');
 		 return rtn;
 	 }
 	 
 	 //-
 	 static dec2xx(num_input, obase, b62x){
 		 var rtn = 0;
-		 
+		 var ibase = 10; var xtag = this.get('xtag');
+		 var bpos = this.get('bpos'); var max_safe_base = this.get('max_safe_base');
+		 if(obase <= max_safe_base){
+			 rtn = parseInt(num_input+'', ibase|0).toString(obase|0); 
+		 }
+		 else{
+			 var i = 0; var b = 0;
+			 var oArr = [];
+			 var num_input_orig = num_input;
+			 while(num_input >= obase){
+				 b = num_input % obase;
+				 num_input = Math.floor(num_input/obase);
+				 if(b <= bpos){
+					 oArr[i++] = b62x[b];
+				 }
+				 else{
+					 oArr[i++] = b62x[b-bpos];
+					 oArr[i++] = xtag;
+				 }
+			 }
+			 b = num_input;
+			 if(b <= bpos){
+				 oArr[i++] = b62x[b];
+			 }
+			 else{
+				 oArr[i++] = b62x[b-bpos];
+				 oArr[i++] = xtag;
+			 }
+			 oArr.reverse();
+			 rtn = oArr.join('');
+		 }
+		 console.log('static dec2xx: in:['+num_input_orig+'] in 10, obase:['+obase+'] rtn:['+rtn+'].');
 		 return rtn;
 	 }
 	 

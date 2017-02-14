@@ -66,14 +66,14 @@ class Base62x {
 		$bpos = self::bpos;
 		$xpos = self::xpos;
 		$ascmax = self::ascmax;
-		$max_safe_base = self::max_safe_base;
+		#$max_safe_base = self::max_safe_base;
 
 		$rb62x = self::fillRb62x($b62x, $bpos, $xpos);
 		$isNum = false;
 		if($ibase > 0){ $isNum = true; }
 		if($isNum){
 			$output = 0;
-			$num_input = self::xx2dec($input, $ibase, $max_safe_base, $rb62x); 	
+			$num_input = self::xx2dec($input, $ibase, $rb62x); 	
 			$obase = $xpos;
 			$output = self::dec2xx($num_input, $obase, $b62x);
 			# why a mediate number format is needed?
@@ -172,14 +172,14 @@ class Base62x {
 		$xpos = self::xpos;
 		$ascmax = self::ascmax;
 		$rb62x = self::fillRb62x($b62x, $bpos, $xpos);
-		$max_safe_base = self::max_safe_base;
+		#$max_safe_base = self::max_safe_base;
 		
 		$isNum = false;
 		if($obase > 0){ $isNum = true; }
 		if($isNum){
 			$output = 0;
 			$ibase = $xpos;
-			$num_input = self::xx2dec($input, $ibase, $max_safe_base, $rb62x); 	
+			$num_input = self::xx2dec($input, $ibase, $rb62x); 	
 			$output = self::dec2xx($num_input, $obase, $b62x);
 			# why a mediate number format is needed?
 		}
@@ -273,7 +273,7 @@ class Base62x {
 	}
 
 	# xx2dec
-	public static function xx2dec($inum, $ibase, $safebase, $ridx){
+	public static function xx2dec($inum, $ibase, $ridx){
 
 		$onum = 0;
 		$obase = 10; $xtag = self::XTAG; $bpos = self::bpos;
@@ -284,9 +284,9 @@ class Base62x {
 		else{
 			$iArr = str_split($inum);
 			$iArr = array_reverse($iArr);
-			$arrLen = count($iArr) - 1;
+			$arrLen = count($iArr);
 			$xnum = 0;
-			for($i=0; $i<=$arrLen; $i++){
+			for($i=0; $i<$arrLen; $i++){
 				if($iArr[$i+1] == $xtag){
 					$tmpi = $bpos + $ridx[$iArr[$i]];
 					$xnum++;
@@ -444,6 +444,7 @@ class Base62x {
 	    }
 	    return array($rtn=$op, $m);
 	}
+	
 }
 
 ?>
