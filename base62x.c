@@ -108,7 +108,7 @@ int main( int argc, char *argv[] ){
 
 	int m = 0;
 	int inputlen = strlen(input);
-	int arrsize = (int)inputlen * 2;  //- why? maxium of output length
+	int arrsize = (int)inputlen * log(fbase) / log(xpos) + 1;  //- why? maxium of output length, why threefold? http://stackoverflow.com/questions/14471846/calculating-the-length-needed-to-represent-an-integer-in-an-arbitrary-base
 	unsigned char output[arrsize]; //*output[ arrsize ] 
 
 	//- for integer

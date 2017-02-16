@@ -125,7 +125,7 @@
 				}
 				while(++i < inputlen);
 			 }
-			 console.log('static enc: op:['+op+'] asctype:['+asctype+'] inputArr:['+inputArr+']');
+			 //console.log('static enc: op:['+op+'] asctype:['+asctype+'] inputArr:['+inputArr+']');
 			 rtn = op.join('');
 		 }
 		 return rtn;
@@ -398,7 +398,7 @@
 		 }
 		 rtn['ascidx'] = ascidx;
 		 rtn['ascrlist'] = ascrlist;
-		 console.log('static setAscii: rtn:['+JSON.stringify(rtn)+'] inputArr:['+inputArr+']');
+		 //console.log('static setAscii: rtn:['+JSON.stringify(rtn)+'] inputArr:['+inputArr+']');
 		 return rtn;
 	 }
 	 
@@ -407,7 +407,11 @@
 		 var rtn = 0;
 		 var obase = 10; var xtag = this.get('xtag');
 		 var bpos = this.get('bpos'); var max_safe_base = this.get('max_safe_base');
-		 if(ibase <= max_safe_base){
+		 var xpos = this.get('xpos');
+		 if(ibase < 2 || ibase > xpos){
+			console.log('static xx2dec: illegal ibase:['+ibase+']');
+		 }
+		 else if(ibase <= max_safe_base){
 			 rtn = parseInt(input+'', ibase|0).toString(obase|0); //http://locutus.io/php/math/base_convert/
 		 }
 		 else{
@@ -425,12 +429,11 @@
 					 tmpi = rb62x[iArr[i]];
 				 }
 				 rtn += tmpi * Math.pow(ibase, (i-xnum));
-				 console.log('static xx2dec: i:['+i+'] chr:['+iArr[i]+'] rtn:['+rtn+']');
 			 }
 			 //- oversize check
 			 //- @todo			 
 		 }
-		 console.log('static xx2dec: in:['+input+'] ibase:['+ibase+'] rtn:['+rtn+'] in 10.');
+		 //console.log('static xx2dec: in:['+input+'] ibase:['+ibase+'] rtn:['+rtn+'] in 10.');
 		 return rtn;
 	 }
 	 
@@ -439,7 +442,11 @@
 		 var rtn = 0;
 		 var ibase = 10; var xtag = this.get('xtag');
 		 var bpos = this.get('bpos'); var max_safe_base = this.get('max_safe_base');
-		 if(obase <= max_safe_base){
+		 var xpos = this.get('xpos');
+		 if(obase < 2 || obase > xpos){
+			console.log('static xx2dec: illegal ibase:['+ibase+']');
+		 }
+		 else if(obase <= max_safe_base){
 			 rtn = parseInt(num_input+'', ibase|0).toString(obase|0); 
 		 }
 		 else{
@@ -468,7 +475,7 @@
 			 oArr.reverse();
 			 rtn = oArr.join('');
 		 }
-		 console.log('static dec2xx: in:['+num_input_orig+'] in 10, obase:['+obase+'] rtn:['+rtn+'].');
+		 //console.log('static dec2xx: in:['+num_input_orig+'] in 10, obase:['+obase+'] rtn:['+rtn+'].');
 		 return rtn;
 	 }
 	 

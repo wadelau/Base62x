@@ -373,9 +373,7 @@ public static final class Base62x{
 	//- inner facilites
 	//-
 	private static int[] fillRb62x(byte[] b62x, int bpos, int xpos){
-		
 		int[] rb62x = new int[xpos*2]; //{};
-
 		for(int i=0; i<=xpos; i++){
 			if(i > bpos && i < xpos){
 				//- omit x1, x2, x3	
@@ -384,9 +382,7 @@ public static final class Base62x{
 				rb62x[b62x[i]] = i;	
 			}
 		}
-
 		return rb62x;
-
 	}
 	
 	//-
@@ -443,24 +439,80 @@ public static final class Base62x{
 
 	//-
 	private static long xx2dec(String input, int ibase, int[] rb62x){
-	
-		long decnum = 0L;
-
+		long rtn = 0L;
 		//- @todo
-
-		return decnum;
-
+		int obase = 10; char xtag = Base62x.xtag;
+		int bpos = Base62x.bpos; int xpos = Base62x.xpos;
+		int max_safe_base = Base62x.max_safe_base;
+		if(ibase < 2 || ibase > xpos){
+			System.out.println("Base62x.xx2dec: illegal ibase:["+ibase+"]");
+		}
+		else if(ibase <= max_safe_base){
+			rtn = Long.toString(Long.parseLong(input, ibase), obase);
+		}
+		else{
+			char[] iarr = input.split();
+			int arrlen = iarr.length;
+			int xnum = 0; int tmpi = 0;
+			Collections.reverse(iarr);
+			for(int i=0; i<arrlen; i++){
+				if(iarr[i+1] == xtag){
+					tmpi = bpos + rb62x[iarr[i]];
+					xnum++;
+					i++;
+				}
+				else{
+					tmpi = rb62x[iarr[i]];
+				}
+				rtn += tmpi * Math.pow(ibase, (i-xum));
+			}
+			//- oversize check
+			//- @todo
+		}
+		return rtn;
 	}
 
 	//-
-	private static String dec2xx(long decnum, int obase, int[] rb62x){
-	
-		String ostr = "";
-
+	private static String dec2xx(long num_input, int obase, int[] b62x){
+		String rtn = "";
 		//- @todo
-		
-		return ostr;
-
+		int ibase = 10; char xtag = Base62x.xtag;
+		int bpos = Base62x.bpos; int xpos = Base62x.xpos;
+		int max_safe_base = Base62x.max_safe_base;
+		if(ibase < 2 || ibase > xpos){
+			System.out.println("Base62x.xx2dec: illegal ibase:["+ibase+"]");
+		}
+		else if(ibase <= max_safe_base){
+			rtn = "" + Long.toString(Long.parseLong(num_input, ibase), obase);
+		}
+		else{
+			int i = 0; int b = 0;
+			int inputlen = num_input.length();
+			int outlen = inputlen*Math.log(ibase)/Math.log(obase)+1;
+			char[] oarr = char[outlen]; //- why threefold?
+			while(num_input >= obase){
+				b = num_input % obase;
+				num_input = Math.floor(num_input/obase);
+				if(b <= bpos){
+					oarr[i++] = b62x[b];
+				}
+				else{
+					oarr[i++] = b62x[b-bpos];
+					oarr[i++] = xtag;
+				}
+			}
+			b = num_input;
+			if(b <= bpos){
+				oarr[i++] = b62x[b];
+			}
+			else{
+				oarr[i++] = b62x[b-bpos];
+				oarr[i++] = xtag;
+			}
+			Collections.reverse(oarr);
+			rtn = oarr.join();
+		}
+		return rtn;
 	}
 	
 	//- fix variable length of encoded string
