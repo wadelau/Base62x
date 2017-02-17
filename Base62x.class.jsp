@@ -1,13 +1,4 @@
-<%@page 
-	import="java.util.Date,
-		java.util.HashMap,
-		java.util.Map,
-		java.util.Iterator,
-		java.util.Date"
-	language="java" 
-	pageEncoding="UTF-8"%><%
-%><%!
-
+<%
 /*
  * -Base62x in -Java
  * Wadelau@{ufqi, gmail, hotmail}.com
@@ -20,8 +11,16 @@
  *  Sat Aug 13 10:48:52 CST 2016
  *  bugfix by decodeByLength, Sat Dec  3 23:05:58 CST 2016
  */
-
  //- Assume We Are in Charset of UTF-8 Runtime
+%><%@page 
+	import="java.util.Date,
+		java.util.HashMap,
+		java.util.Map,
+		java.util.Iterator,
+		java.util.Date"
+	language="java" 
+	pageEncoding="UTF-8"%><%
+%><%!
  
 public static final class Base62x{
 
@@ -64,7 +63,7 @@ public static final class Base62x{
 
 	//- methods
 
-	//- encode, ibase=2,8,10,16,32...
+	//- encode, ibase=2,8,10,16,32...63
 	public static String encode(String input, int ibase){
 		
 		StringBuffer osb = new StringBuffer();
@@ -88,12 +87,12 @@ public static final class Base62x{
 			//- numeric conversion
 			long num_input = Base62x.xx2dec(input, ibase, rb62x);
 			int obase = xpos;
-			osb.append(Base62x.dec2xx(num_input, obase, rb62x));
+			osb.append(Base62x.dec2xx(num_input, obase, b62x));
 		}
 		else{
 			//- string encoding	
 			boolean isasc = false;	
-			byte[] inputArr = input.getBytes(); // new byte[]{-112, 25, 66, -12}; // //StandardCharsets.UTF_8
+			byte[] inputArr = input.getBytes(); // new byte[]{-112, 25, 66, -12}; //StandardCharsets.UTF_8
 			int inputlen = inputArr.length;
 			HashMap setResult = Base62x.setAscii(codetype, inputArr, ascidx, ascmax, asclist, ascrlist);
 			isasc = (boolean)setResult.get("isasc");
@@ -183,7 +182,7 @@ public static final class Base62x{
 
 	}
 
-	//- decode, obase=2,8,10,16,32...
+	//- decode, obase=2,8,10,16,32...63
 	public static String decode(String input, int obase){
 	
 		StringBuffer osb = new StringBuffer();
@@ -207,7 +206,7 @@ public static final class Base62x{
 			//- numeric conversion
 			int ibase = xpos;
 			long num_input = Base62x.xx2dec(input, ibase, rb62x);
-			osb.append(Base62x.dec2xx(num_input, obase, rb62x));
+			osb.append(Base62x.dec2xx(num_input, obase, b62x));
 			//-  why a mediate number format is needed?
 		}
 		else{
@@ -447,16 +446,17 @@ public static final class Base62x{
 		if(ibase < 2 || ibase > xpos){
 			System.out.println("Base62x.xx2dec: illegal ibase:["+ibase+"]");
 		}
-		else if(ibase <= max_safe_base){
-			rtn = Long.toString(Long.parseLong(input, ibase), obase);
+		else if(ibase <= max_safe_base && obase <= max_safe_base){
+			rtn = Long.parseLong(Long.toString(Long.parseLong(input, ibase), obase));
 		}
 		else{
-			char[] iarr = input.split();
+			char[] iarr = (new StringBuilder(new String(input)).reverse().toString())
+					.toCharArray();
 			int arrlen = iarr.length;
 			int xnum = 0; int tmpi = 0;
-			Collections.reverse(iarr);
+			//java.util.Collections.reverse(iarr);
 			for(int i=0; i<arrlen; i++){
-				if(iarr[i+1] == xtag){
+				if(i+1 < arrlen && iarr[i+1] == xtag){
 					tmpi = bpos + rb62x[iarr[i]];
 					xnum++;
 					i++;
@@ -464,54 +464,58 @@ public static final class Base62x{
 				else{
 					tmpi = rb62x[iarr[i]];
 				}
-				rtn += tmpi * Math.pow(ibase, (i-xum));
+				rtn += tmpi * Math.pow(ibase, (i-xnum));
 			}
 			//- oversize check
 			//- @todo
 		}
+		//System.out.print("static xx2dec: in:["+input+"] ibase:["+ibase+"] rtn:["+rtn+"] in 10.");
 		return rtn;
 	}
 
 	//-
-	private static String dec2xx(long num_input, int obase, int[] b62x){
+	private static String dec2xx(long num_input, int obase, byte[] b62x){
 		String rtn = "";
 		//- @todo
 		int ibase = 10; char xtag = Base62x.xtag;
 		int bpos = Base62x.bpos; int xpos = Base62x.xpos;
 		int max_safe_base = Base62x.max_safe_base;
+		String inputs = Long.toString(num_input);
 		if(ibase < 2 || ibase > xpos){
 			System.out.println("Base62x.xx2dec: illegal ibase:["+ibase+"]");
 		}
-		else if(ibase <= max_safe_base){
-			rtn = "" + Long.toString(Long.parseLong(num_input, ibase), obase);
+		else if(obase <= max_safe_base && ibase <= max_safe_base){
+			rtn = Long.toString(Long.parseLong(inputs, ibase), obase);
 		}
 		else{
 			int i = 0; int b = 0;
-			int inputlen = num_input.length();
-			int outlen = inputlen*Math.log(ibase)/Math.log(obase)+1;
-			char[] oarr = char[outlen]; //- why threefold?
+			int inputlen = inputs.length();
+			int outlen = (int)(inputlen*Math.log(ibase)/Math.log(obase))+1;
+			char[] oarr = new char[outlen]; //- why threefold?
 			while(num_input >= obase){
-				b = num_input % obase;
-				num_input = Math.floor(num_input/obase);
+				b = (int)(num_input % obase);
+				num_input = (long)Math.floor(num_input/obase);
 				if(b <= bpos){
-					oarr[i++] = b62x[b];
+					oarr[i++] = (char)b62x[b];
 				}
 				else{
-					oarr[i++] = b62x[b-bpos];
+					oarr[i++] = (char)b62x[b-bpos];
 					oarr[i++] = xtag;
 				}
 			}
-			b = num_input;
+			b = (int)num_input;
 			if(b <= bpos){
-				oarr[i++] = b62x[b];
+				oarr[i++] = (char)b62x[b];
 			}
 			else{
-				oarr[i++] = b62x[b-bpos];
+				oarr[i++] = (char)b62x[b-bpos];
 				oarr[i++] = xtag;
 			}
-			Collections.reverse(oarr);
-			rtn = oarr.join();
+			//Collections.reverse(oarr);
+			//rtn = oarr.join();
+			rtn = new StringBuilder(new String(oarr)).reverse().toString();
 		}
+		//System.out.println("static dec2xx: in:["+inputs+"] in 10, obase:["+obase+"] rtn:["+rtn+"].");
 		return rtn;
 	}
 	

@@ -157,8 +157,7 @@
 			var ibase = xpos;
 			var num_input = this.xx2dec(input, ibase, rb62x);
 			rtn = this.dec2xx(num_input, obase, b62x);
-			// why a medille num_input is needed?
-			// for double check?
+			// why a medille num_input is needed? for double check?
 		}
 		else{
 			// string
@@ -401,7 +400,7 @@
 		 //console.log('static setAscii: rtn:['+JSON.stringify(rtn)+'] inputArr:['+inputArr+']');
 		 return rtn;
 	 }
-	 
+	  
 	 //-
 	 static xx2dec(input, ibase, rb62x){
 		 var rtn = 0;
@@ -442,7 +441,7 @@
 		 var rtn = 0;
 		 var ibase = 10; var xtag = this.get('xtag');
 		 var bpos = this.get('bpos'); var max_safe_base = this.get('max_safe_base');
-		 var xpos = this.get('xpos');
+		 var xpos = this.get('xpos'); var num_input_orig = num_input;
 		 if(obase < 2 || obase > xpos){
 			console.log('static xx2dec: illegal ibase:['+ibase+']');
 		 }
@@ -452,7 +451,6 @@
 		 else{
 			 var i = 0; var b = 0;
 			 var oArr = [];
-			 var num_input_orig = num_input;
 			 while(num_input >= obase){
 				 b = num_input % obase;
 				 num_input = Math.floor(num_input/obase);

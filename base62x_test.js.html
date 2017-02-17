@@ -20,9 +20,9 @@ var encs = Base62x.encode(s);
 //encs = 'CZXXOcDaDpWqCJ8pD43akAtbd8ijvfQ7vOoMBUQwaEc1eEQrWUcLjp8uEkx2zcZfDRsuWHcLY834p838mCJSWCJWwC3OwCpCWHqrKAp0uC30WA4DeQMvX85DqOMvaON9a85HfRMKfG3GuCJOv';
 var decs = Base62x.decode(encs);
 
-var inum = 12345+randi*randi*randi+'fe'; var ibase = 16;
+var inum = randi+'a'+1+randi+'fea'; var ibase = 16; var obase = 16;
 var num_enc = Base62x.encode(inum, ibase);
-var num_dec = Base62x.decode(num_enc, ibase);
+var num_dec = Base62x.decode(num_enc, obase);
 
 var wobj = document.getElementById(divid);
 var ostr = '';

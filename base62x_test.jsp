@@ -55,7 +55,7 @@ int faili2 = 0;
 String s_enc2;
 String s_dec2;
 int xcount = 0;
-int testcount = 3000000;
+int testcount = 3000;
 for(i=0; i<testcount; i++){
     s = Integer.toHexString(rd.nextInt(999999999)) 
     	+ "中a3" + Integer.toHexString(rd.nextInt(9999999)) 
@@ -118,5 +118,11 @@ byte[] bytearr = new byte[4];
 for(i=0; i<bytearr.length; i++){
 	out.println("i:"+i+" v:"+bytearr[i]);	
 }
+
+int ibase = 16; int obase = 16;
+String randi = rd.nextInt(1000)+"ab"+rd.nextInt(10000);
+s_enc = Base62x.encode(randi, ibase);
+s_dec = Base62x.decode(s_enc, obase);
+out.println("<br/>Number conversion:<br/>randi: ["+randi+"], encns:["+s_enc+"]<br/>decns:["+s_dec+"]");
 
 %>
