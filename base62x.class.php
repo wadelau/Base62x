@@ -117,8 +117,10 @@ class Base62x {
 						case 1:
 							$c0 = $inputArr[$i] >> 2;
 							$c1 = (($inputArr[$i] << 6) & 0xff) >> 6;
-							if($c0 > $bpos){ $op[$m] = $xtag; $op[++$m] = $b62x[$c0]; }else{ $op[$m] = $b62x[$c0]; } 
-							if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }else{ $op[++$m] = $b62x[$c1]; } 
+							if($c0 > $bpos){ $op[$m] = $xtag; $op[++$m] = $b62x[$c0]; }
+							else{ $op[$m] = $b62x[$c0]; } 
+							if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }
+							else{ $op[++$m] = $b62x[$c1]; } 
 							break;
 
 						case 2:
@@ -126,9 +128,12 @@ class Base62x {
 							$c0 = $inputArr[$i] >> 2;
 							$c1 = ((($inputArr[$i] << 6) & 0xff) >> 2) | ($inputArr[$i+1] >> 4);
 							$c2 = (($inputArr[$i+1] << 4) & 0xff) >> 4;
-							if($c0 > $bpos){ $op[$m] = $xtag; $op[++$m] = $b62x[$c0]; }else{ $op[$m] = $b62x[$c0]; } 
-							if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }else{ $op[++$m] = $b62x[$c1]; } 
-							if($c2 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c2]; }else{ $op[++$m] = $b62x[$c2]; } 
+							if($c0 > $bpos){ $op[$m] = $xtag; $op[++$m] = $b62x[$c0]; }
+							else{ $op[$m] = $b62x[$c0]; } 
+							if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }
+							else{ $op[++$m] = $b62x[$c1]; } 
+							if($c2 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c2]; }
+							else{ $op[++$m] = $b62x[$c2]; } 
 							$i += 1;
 							break;
 
@@ -139,10 +144,14 @@ class Base62x {
 							$c1 = ((($inputArr[$i] << 6) & 0xff) >> 2) | ($inputArr[$i+1] >> 4);
 							$c2 = ((($inputArr[$i+1] << 4) & 0xff) >> 2) | ($inputArr[$i+2] >> 6);
 							$c3 = (($inputArr[$i+2] << 2) & 0xff) >> 2;
-							if($c0 > $bpos){ $op[$m] = $xtag; $op[++$m] = $b62x[$c0]; }else{ $op[$m] = $b62x[$c0]; } 
-							if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }else{ $op[++$m] = $b62x[$c1]; } 
-							if($c2 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c2]; }else{ $op[++$m] = $b62x[$c2]; } 
-							if($c3 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c3]; }else{ $op[++$m] = $b62x[$c3]; } 
+							if($c0 > $bpos){ $op[$m] = $xtag; $op[++$m] = $b62x[$c0]; }
+							else{ $op[$m] = $b62x[$c0]; } 
+							if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }
+							else{ $op[++$m] = $b62x[$c1]; } 
+							if($c2 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c2]; }
+							else{ $op[++$m] = $b62x[$c2]; } 
+							if($c3 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c3]; }
+							else{ $op[++$m] = $b62x[$c3]; } 
 							$i += 2;	
 					}
 					$m++;
