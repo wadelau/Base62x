@@ -37,7 +37,8 @@ Usage: ./base62x [-v] [-n <2|8|10|16|32>] <-enc|dec> string
 Version: 0.90
 ```shell
 shell> mi=0; umi=0; for i in {1..10000}; \
-	do r=`cat /dev/urandom|tr -dc 'a-zA-Z0-9'|fold -w 16|head -n 1`; \
+	do \
+	r=`cat /dev/urandom|tr -dc 'a-zA-Z0-9'|fold -w 16|head -n 1`; \
 	r2=`cat /dev/urandom|tr -dc 'a-zA-Z0-9'|fold -w 16|head -n 1`; \
 	a="$r中文时间a$r2"; b=`./base62x -enc $a`; c=`./base62x -dec $b`; \
 	if [ "$a" == "$c" ]; then d="matched";mi=`expr $mi + 1`;\
@@ -68,15 +69,12 @@ $s3 = "\"Tcler's Wiki: UTF-8 bit by bit (Revision 6)\". 2009-04-25. Retrieved 20
 	."!  # $ % & ' ( ) * + , - . /";
 
 print "[$s] encoded:[".($s_enc=Base62x::encode($s))."]\n";
-
 print "[$s_enc] decoded:[".($s_dec=Base62x::decode($s_enc))."]\n";
 
 print "\n[$s2] encoded:[".($s2_enc=Base62x::encode($s2))."]\n";
-
 print "[$s2_enc] decoded:[".($s2_dec=Base62x::decode($s2_enc))."]\n";
 
 print "\n[$s3] encoded:[".($s3_enc=Base62x::encode($s3))."]\n";
-
 print "[$s3_enc] decoded:[".($s3_dec=Base62x::decode($s3_enc))."]\n";
 
 ?>
@@ -135,8 +133,6 @@ out.println("<br/>["+s2_enc+"] decoded:["+(s2_dec=Base62x.decode(s2_enc))+"]");
 out.println("<br/>["+s3+"] encoded:["+(s3_enc=Base62x.encode(s3))+"]");
 out.println("<br/>["+s3_enc+"] decoded:["+(s3_dec=Base62x.decode(s3_enc))+"]");
 
-out.println("<br/><br/>Time:["+(new Date())+"] "+((new java.util.Random()).nextInt(999999)));
-
 %>
 ```
 
@@ -146,7 +142,7 @@ out.println("<br/><br/>Time:["+(new Date())+"] "+((new java.util.Random()).nextI
 
 ## base62x_test.js.html
 
-in base62x_test.js.html
+In base62x_test.js.html
 
 ```javascript
 var randi = Math.ceil(Math.random()*10000);
