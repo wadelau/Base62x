@@ -7,6 +7,17 @@ Base62x is an alternative approach to Base 64 without symbols in output.
 
 [-Base62x](https://ufqi.com/naturedns/search?q=-base62x) . [-Base62x Online](https://ufqi.com/naturedns/search?q=-base62x)
 
+# -Base62x Usage
+
+Base62x.encode(myString);
+
+Base62x.decode(encodedString);
+
+Base62x.encode(myString, inBase);
+
+Base62x.decode(encodedString, outBase);
+
+
 # -Base62x Paper in IEEE
 
 Article Number, 6020065 ;
@@ -122,13 +133,27 @@ out.println("<br/><br/>Time:["+(new Date())+"] "+((new java.util.Random()).nextI
 %>
 ```
 
+# Base62x in -JavaScript
+
+## Base62x.class.js
+
+## base62x_test.js.html
+
+in base62x_test.js.html
+
+```javascript
+var randi = Math.ceil(Math.random()*10000);
+var s = randi+'abcd'+(randi*randi)+'1234@'+(randi%2==0?'中國-文化-源遠流長'+randi+':：:':randi)+(new Date())+'@'+Math.ceil(Math.random()*100000);
+var encs = Base62x.encode(s);
+var decs = Base62x.decode(encs);
+
+var inum = randi+'a'+1+randi+'fea'; var ibase = 16; var obase = 16;
+var num_enc = Base62x.encode(inum, ibase);
+var num_dec = Base62x.decode(num_enc, obase);
+```
 
 # Base62x in -Perl
 
 @todo
 
-
-# Base62x in -JavaScript
-
-@todo
 
