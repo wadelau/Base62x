@@ -35,9 +35,9 @@ shell>./base62x
 Usage: ./base62x [-v] [-n <2|8|10|16|32>] <-enc|dec> string
 
 Version: 0.90
-
+```shell
 shell> mi=0; umi=0; for i in {1..10000}; do r=`cat /dev/urandom|tr -dc 'a-zA-Z0-9'|fold -w 16|head -n 1`; r2=`cat /dev/urandom|tr -dc 'a-zA-Z0-9'|fold -w 16|head -n 1`; a="$r中文时间a$r2"; b=`./base62x -enc $a`; c=`./base62x -dec $b`; if [ "$a" == "$c" ]; then d="matched";mi=`expr $mi + 1`;else d="unmatched"; umi=`expr $umi + 1`; fi; echo -e "a=$a b="$b" c="$c" d="$d" mi="$mi" umi="$umi"\n"; done
-
+```
 
 # Base62x in -PHP
 
@@ -143,7 +143,8 @@ in base62x_test.js.html
 
 ```javascript
 var randi = Math.ceil(Math.random()*10000);
-var s = randi+'abcd'+(randi*randi)+'1234@'+(randi%2==0?'中國-文化-源遠流長'+randi+':：:':randi)+(new Date())+'@'+Math.ceil(Math.random()*100000);
+var s = randi+'abcd'+(randi*randi)+'1234@'+(randi%2==0?'中國-文化-源遠流長'
+	+randi+':：:':randi)+(new Date())+'@'+Math.ceil(Math.random()*100000);
 var encs = Base62x.encode(s);
 var decs = Base62x.decode(encs);
 
