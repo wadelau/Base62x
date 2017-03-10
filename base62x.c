@@ -318,7 +318,8 @@ int main( int argc, char *argv[] ){
 							output[m]=c0;
 						}
 						if( isdebug){
-							printf("\ti:[%d] decode char:[%c %c %c %c] from:[%d %d %d %d] to:[%c %c %c] val:[%d %d %d] k:[%d]\n", 
+							printf("\ti:[%d] decode char:[%c %c %c %c] from:[%d %d %d %d] to:[%c %c %c] \
+								val:[%d %d %d] k:[%d]\n", 
 								i, input[i-3],input[i-2], input[i-1], input[i], tmpin[0], 
 								tmpin[1], 0, 0, c0, 0, 0, c0, 0, 0, k);
 						}
@@ -346,7 +347,8 @@ int main( int argc, char *argv[] ){
 							output[++m]=c1;
 						}
 						if( isdebug){
-							printf("\ti:[%d] decode char:[%c %c %c %c] from:[%d %d %d %d] to:[%c %c %c] val:[%d %d %d] k:[%d]\n", 
+							printf("\ti:[%d] decode char:[%c %c %c %c] from:[%d %d %d %d] to:[%c %c %c] \
+								val:[%d %d %d] k:[%d]\n", 
 								i, input[i-3],input[i-2], input[i-1], input[i], tmpin[0], 
 								tmpin[1], tmpin[2], 0, c0, c1, 0, c0, c1, 0, k);
 						}
@@ -403,8 +405,8 @@ int main( int argc, char *argv[] ){
 							}
 						}
 						if( isdebug){
-							printf("    i:[%d] decode char:[%c %c %c %c] from:[%d %d %d %d] to:[%c %c %c] "
-								."val:[%d %d %d] k:[%d]\n", 
+							printf("    i:[%d] decode char:[%c %c %c %c] from:[%d %d %d %d] to:[%c %c %c] \
+								val:[%d %d %d] k:[%d]\n", 
 								i, input[i-3],input[i-2],input[i-1], input[i], tmpin[0], tmpin[1], 
 								tmpin[2], tmpin[3], c0, c1, c2, c0, c1, c2, k);
 						}
