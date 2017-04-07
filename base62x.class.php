@@ -80,6 +80,7 @@ class Base62x {
 		}
 		else{
 			# string
+			$ascidx = array(); $ascrlist = array();
 			$inputArr = str_split($input); $inputlen = count($inputArr);
 			$setResult = self::setAscii($codetype, $inputArr, $ascidx, $ascmax, $asclist, $ascrlist);
 			$asctype = $setResult['asctype'];
@@ -194,6 +195,7 @@ class Base62x {
 		}
 		else{
 			# string
+			$ascidx = array(); $ascrlist = array();
 			$inputArr = str_split($input); $inputlen = count($inputArr);
 			$setResult = self::setAscii($codetype, $inputArr, $ascidx, $ascmax, $asclist, $ascrlist);
 			$asctype = $setResult['asctype'];

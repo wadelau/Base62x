@@ -15,7 +15,7 @@
  *		12:53 02 August 2016, improvs on codes.
  * v0.8, Fri Oct  7 11:34:21 CST 2016, numeric conversion imprvs, max_safe_base.
  * v0.9, bugfix on boundary checking for decode, Mon Dec 12 19:09:00 CST 2016, from PHP, Java version
- *
+ * v1.0, \0 in I/O, Fri Apr  7 19:08:44 CST 2017
  */
 
 #include <stdio.h>
@@ -50,7 +50,7 @@ int main( int argc, char *argv[] ){
     int ascidx[ascmax+1];
     int ascrlist[ascmax+1]; 
     static const int max_safe_base = 36;
-    static const float ver = 0.9; // Mon Dec 12 19:33:18 CST 2016
+    static const float ver = 1.0; // Fri Apr  7 19:26:53 CST 2017
 
     for(i=0; i<=xpos; i++){
         if( i>bpos && i<xpos){
@@ -108,7 +108,9 @@ int main( int argc, char *argv[] ){
 
 	int m = 0;
 	int inputlen = strlen(input);
-	int arrsize = (int)inputlen * log(fbase) / log(xpos) + 1;  //- why? maxium of output length, why threefold? http://stackoverflow.com/questions/14471846/calculating-the-length-needed-to-represent-an-integer-in-an-arbitrary-base
+	int inputlenx = strnlen(input, inputlen+1); // try to contain null byte
+	inputlen = inputlenx>(inputlen+1) ? inputlenx : inputlen;
+	int arrsize = (int)inputlen * 2; // log(fbase) / log(xpos) + 1;  //- why? maxium of output length, why threefold? http://stackoverflow.com/questions/14471846/calculating-the-length-needed-to-represent-an-integer-in-an-arbitrary-base
 	unsigned char output[arrsize]; //*output[ arrsize ] 
 
 	//- for integer
@@ -284,14 +286,13 @@ int main( int argc, char *argv[] ){
 		}
 		else{
 			//- for non-ascii
-			int c0=0; int c1=0; int c2=0; int k=0; 
+			int c0=0; int c1=0; int c2=0; 
 			unsigned char tmpin[4];
 			bint['1']=1; bint['2']=2; bint['3']=3; /* special handling with x1, x2, x3 *2 */
 			int maxidx = inputlen - 1; int last8 = inputlen - 8;
 			do{
 				char tmpin[4]={'\0','\0','\0','\0'};
 				remaini = inputlen - i;
-				k=0;
 				if( isdebug){
 					printf("i:[%d] n:[%d] char:[%c]\n", i, input[i], input[i]); 
 				}
@@ -305,23 +306,23 @@ int main( int argc, char *argv[] ){
 							printf("\tremn:[%d] should be the last one. i:[%d] char:[%c] inputlen:[%d]\n",
 								remaini, i, input[i], inputlen);
 						}
-						if( input[i]==xtag){ tmpin[0] = bpos+bint[input[++i]]; k++; }
+						if( input[i]==xtag){ tmpin[0] = bpos+bint[input[++i]]; }
 						else{ tmpin[0]=rb62x[input[i]]; }
 						if(i == maxidx){ //- may be wrapped into a func decode_by_length
 							c0 = (tmpin[0] << 2);	
 							output[m]=c0;
 						}
 						else{
-							if( input[++i]==xtag){ tmpin[1] = bpos+bint[input[++i]]; k++; }
+							if( input[++i]==xtag){ tmpin[1] = bpos+bint[input[++i]]; }
 							else{ tmpin[1]=rb62x[input[i]]; }
 							c0 = tmpin[0] << 2 | tmpin[1]; 
 							output[m]=c0;
 						}
 						if( isdebug){
 							printf("\ti:[%d] decode char:[%c %c %c %c] from:[%d %d %d %d] to:[%c %c %c] \
-								val:[%d %d %d] k:[%d]\n", 
+								val:[%d %d %d]\n", 
 								i, input[i-3],input[i-2], input[i-1], input[i], tmpin[0], 
-								tmpin[1], 0, 0, c0, 0, 0, c0, 0, 0, k);
+								tmpin[1], 0, 0, c0, 0, 0, c0, 0, 0);
 						}
 						break;
 
@@ -330,16 +331,16 @@ int main( int argc, char *argv[] ){
 							printf("\tremn:[%d] get to the last two. i:[%d] char:[%c] inputlen:[%d]\n", 
 								remaini, i, input[i], inputlen);
 						}
-						if( input[i]==xtag){ tmpin[0] = bpos+bint[input[++i]]; k++; }
+						if( input[i]==xtag){ tmpin[0] = bpos+bint[input[++i]]; }
 						else{ tmpin[0]=rb62x[input[i]]; }
-						if( input[++i]==xtag){ tmpin[1] = bpos+bint[input[++i]]; k++; }
+						if( input[++i]==xtag){ tmpin[1] = bpos+bint[input[++i]]; }
 						else{ tmpin[1]=rb62x[input[i]]; }
 						if(i == maxidx){
 							c0 = tmpin[0] << 2 | tmpin[1]; 
 							output[m]=c0;
 						}
 						else{
-							if( input[++i]==xtag){ tmpin[2] = bpos+bint[input[++i]]; k++; }
+							if( input[++i]==xtag){ tmpin[2] = bpos+bint[input[++i]]; }
 							else{ tmpin[2]=rb62x[input[i]]; }
 							c0 = tmpin[0] << 2 | tmpin[1] >> 4; 
 							c1 = ( ( tmpin[1] << 4) & 0xf0) | tmpin[2];
@@ -348,9 +349,9 @@ int main( int argc, char *argv[] ){
 						}
 						if( isdebug){
 							printf("\ti:[%d] decode char:[%c %c %c %c] from:[%d %d %d %d] to:[%c %c %c] \
-								val:[%d %d %d] k:[%d]\n", 
+								val:[%d %d %d]\n", 
 								i, input[i-3],input[i-2], input[i-1], input[i], tmpin[0], 
-								tmpin[1], tmpin[2], 0, c0, c1, 0, c0, c1, 0, k);
+								tmpin[1], tmpin[2], 0, c0, c1, 0, c0, c1, 0);
 						}
 						break;
 
@@ -359,13 +360,13 @@ int main( int argc, char *argv[] ){
 							printf("\tcontinue as usual. i:[%d] inputlen:[%d]\n", i, inputlen);
 						}
 						if(i < last8){
-							if( input[i]==xtag){ tmpin[0] = bpos+bint[input[++i]]; k++; }
+							if( input[i]==xtag){ tmpin[0] = bpos+bint[input[++i]]; }
 							else{ tmpin[0]=rb62x[input[i]]; }
-							if( input[++i]==xtag){ tmpin[1] = bpos+bint[input[++i]]; k++; }
+							if( input[++i]==xtag){ tmpin[1] = bpos+bint[input[++i]]; }
 							else{ tmpin[1]=rb62x[input[i]]; }
-							if( input[++i]==xtag){ tmpin[2] = bpos+bint[input[++i]]; k++; }
+							if( input[++i]==xtag){ tmpin[2] = bpos+bint[input[++i]]; }
 							else{ tmpin[2]=rb62x[input[i]]; }
-							if( input[++i]==xtag){ tmpin[3] = bpos+bint[input[++i]]; k++; }
+							if( input[++i]==xtag){ tmpin[3] = bpos+bint[input[++i]]; }
 							else{ tmpin[3]=rb62x[input[i]]; }
 							c0 = tmpin[0] << 2 | tmpin[1] >> 4; 
 							c1 = ( ( tmpin[1] << 4) & 0xf0) | ( tmpin[2] >> 2 );
@@ -375,16 +376,16 @@ int main( int argc, char *argv[] ){
 							output[++m]=c2;
 						}
 						else{
-							if( input[i]==xtag){ tmpin[0] = bpos+bint[input[++i]]; k++; }
+							if( input[i]==xtag){ tmpin[0] = bpos+bint[input[++i]]; }
 							else{ tmpin[0]=rb62x[input[i]]; }
-							if( input[++i]==xtag){ tmpin[1] = bpos+bint[input[++i]]; k++; }
+							if( input[++i]==xtag){ tmpin[1] = bpos+bint[input[++i]]; }
 							else{ tmpin[1]=rb62x[input[i]]; }
 							if(i == maxidx){
 								c0 = tmpin[0] << 2 | tmpin[1]; 
 								output[m]=c0;
 							}
 							else{
-								if( input[++i]==xtag){ tmpin[2] = bpos+bint[input[++i]]; k++; }
+								if( input[++i]==xtag){ tmpin[2] = bpos+bint[input[++i]]; }
 								else{ tmpin[2]=rb62x[input[i]]; }
 								if(i == maxidx){
 									c0 = tmpin[0] << 2 | tmpin[1] >> 4; 
@@ -393,7 +394,7 @@ int main( int argc, char *argv[] ){
 									output[++m]=c1;
 								}
 								else{
-									if( input[++i]==xtag){ tmpin[3] = bpos+bint[input[++i]]; k++; }
+									if( input[++i]==xtag){ tmpin[3] = bpos+bint[input[++i]]; }
 									else{ tmpin[3]=rb62x[input[i]]; }
 									c0 = tmpin[0] << 2 | tmpin[1] >> 4; 
 									c1 = ( ( tmpin[1] << 4) & 0xf0) | ( tmpin[2] >> 2 );
@@ -406,35 +407,26 @@ int main( int argc, char *argv[] ){
 						}
 						if( isdebug){
 							printf("    i:[%d] decode char:[%c %c %c %c] from:[%d %d %d %d] to:[%c %c %c] \
-								val:[%d %d %d] k:[%d]\n", 
+								val:[%d %d %d]\n", 
 								i, input[i-3],input[i-2],input[i-1], input[i], tmpin[0], tmpin[1], 
-								tmpin[2], tmpin[3], c0, c1, c2, c0, c1, c2, k);
+								tmpin[2], tmpin[3], c0, c1, c2, c0, c1, c2);
 						}
 				}
 				m++;
 			}
-			while( ++i < inputlen);
+			while(++i < inputlen);
 		}
 	}
-
-	int k = strlen(output);
-	if( isdebug){
-		printf("---xxx -i:[%d] char:[%c]. m:[%d] getchar:[%c] arrsize:[%d] out-size:[%d]\n", i, input[i], 
-			m, output[m], arrsize, strlen(output));
-	}
-
-	for( i=m; i<k; i++){
-		output[i] = '\0';
-	}
-
-	if( isdebug){
+	output[m] = '\0';
+	if(isdebug){
 		printf("\nOutput:[%s]\n", output);
 		for( i=0; i<m; i++){
 			printf("  ---i:[%d] char:[%c] val:[%d]\n", i, output[i], output[i]);
 		}
 	}
-	else{
-		printf("%s", output);    
+	//printf("%s", output);	
+	for(i=0; i<m; i++){ // avoid stopping at \0 in output
+		printf("%c", output[i]);
 	}
 
     return 0;
