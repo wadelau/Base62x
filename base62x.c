@@ -52,14 +52,16 @@ int main( int argc, char *argv[] ){
     static const int max_safe_base = 36;
     static const float ver = 1.0; // Fri Apr  7 19:26:53 CST 2017
 
-    for(i=0; i<=xpos; i++){
-        if( i>bpos && i<xpos){
-            //--omit x1, x2, x3
-        }
-		else{
-            rb62x[b62x[i]] = i;
-        }
-    }
+	if(issetn == 1 || codetype == 1){
+		for(i=0; i<=xpos; i++){
+			if( i>bpos && i<xpos){
+				//--omit x1, x2, x3
+			}
+			else{
+				rb62x[b62x[i]] = i;
+			}
+		}
+	}
 
     if( argc<3){
 		printf("Usage: %s [-v] [-n <2|8|10|16|32|36|60|62>] <-enc|dec> string\n", argv[0]);
@@ -114,7 +116,7 @@ int main( int argc, char *argv[] ){
 	unsigned char output[arrsize]; //*output[ arrsize ] 
 
 	//- for integer
-	if( issetn){
+	if(issetn == 1){
 		char *endptr, *out;
 		int obase = xpos;
 		if(codetype == 1){
@@ -132,7 +134,7 @@ int main( int argc, char *argv[] ){
 	
 	//- for string
 	int remaini = 0;
-	if( codetype == 0 && input[0] <= ascmax){
+	if(codetype == 0 && input[0] <= ascmax){
 		asctype = 1;
 		for(i=1; i<inputlen; i++){
 			int tmpi = input[i];
