@@ -22,7 +22,7 @@ Base62x.decode(encodedString, outBase);
 
 Article Number, 6020065 ;
 
-[-R/C2TZ](http://ufqi.com/naturedns/search?q=-r/C2TZ) , page url in [-URL4P](http://ufqi.com/naturedns/search?q=-url4p) .
+[ -R/p2SK ](http://ufqi.com/naturedns/search?q=-r/C2TZ) , page url in [ -URL4P ](http://ufqi.com/naturedns/search?q=-url4p) .
 
 # base62x.c
 
