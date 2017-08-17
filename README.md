@@ -3,7 +3,7 @@ Base62x is an alternative approach to Base 64 without symbols in output.
 
 ![base62x](http://ufqi.com/blog/wp-content/uploads/2016/09/b62x-icon-201306.png)
 
-###Compact, purified and even shorter!
+### Compact, purified and even shorter!
 
 [-Base62x](https://ufqi.com/naturedns/search?q=-base62x) . [-Base62x Online](https://ufqi.com/naturedns/search?q=-base62x)
 
@@ -26,7 +26,7 @@ Article Number, 6020065 ;
 
 # base62x.c
 
-##base62x.c
+## base62x.c
 
 shell> gcc -lm base62x.c -o base62x
 
@@ -49,9 +49,9 @@ shell> mi=0; umi=0; for i in {1..10000}; \
 
 # Base62x in -PHP
 
-##base62x.class.php
+## base62x.class.php
 
-##base62x_test.php
+## base62x_test.php
 
 In base62x_test.php
 ```php
@@ -82,9 +82,9 @@ print "[$s3_enc] decoded:[".($s3_dec=Base62x::decode($s3_enc))."]\n";
 
 # Base62x in -Java
 
-##Base62x.class.jsp
+## Base62x.class.jsp
 
-##base62x_test.jsp
+## base62x_test.jsp
 
 In base62x_test.jsp
 
