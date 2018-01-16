@@ -19,6 +19,7 @@ Base62x.encode(myString, inBase);
 
 Base62x.decode(encodedString, outBase);
 
+![base62x-design](https://ufqi.com/dev/base62x/Base62x-design-201702.v2.JPG)
 
 # -Base62x Paper in IEEE
 
@@ -168,5 +169,12 @@ by https://github.com/beaulac/node-base62x
 # Base62x in -Perl
 
 @todo
+
+
+
+# Base62x in -Python
+
+@todo
+
 
 
