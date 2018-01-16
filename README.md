@@ -158,6 +158,13 @@ var num_enc = Base62x.encode(inum, ibase);
 var num_dec = Base62x.decode(num_enc, obase);
 ```
 
+Play with npm,  
+```javascript
+npm install base62x
+```
+by https://github.com/beaulac/node-base62x 
+
+
 # Base62x in -Perl
 
 @todo
