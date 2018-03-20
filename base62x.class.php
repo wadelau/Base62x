@@ -82,6 +82,8 @@ class Base62x {
 			# string
 			$ascidx = array(); $ascrlist = array();
 			$inputArr = str_split($input); $inputlen = count($inputArr);
+			if(!isset($ascidx)){ $ascidx = array(); }
+			if(!isset($ascrlist)){ $ascrlist = array(); }
 			$setResult = self::setAscii($codetype, $inputArr, $ascidx, $ascmax, $asclist, $ascrlist);
 			$asctype = $setResult['asctype'];
 			$ascidx = $setResult['ascidx'];
