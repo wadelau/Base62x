@@ -19,7 +19,7 @@ Base62x.encode(myString, inBase);
 
 Base62x.decode(encodedString, outBase);
 
-![base62x-design](https://ufqi.com/dev/base62x/Base62x-design-201702.v2.JPG)
+![base62x-design](http://ufqi.com/dev/base62x/Base62x-design-201702.v2.JPG)
 
 # -Base62x Paper in IEEE
 
