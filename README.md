@@ -138,9 +138,9 @@ out.println("<br/>["+s3_enc+"] decoded:["+(s3_dec=Base62x.decode(s3_enc))+"]");
 
 %>
 
-It's an alternative option for -Base64 in -Java , [JDK Doc](https://docs.oracle.com/javase/10/docs/api/java/util/Base64.html).
-
 ```
+It's an alternative option for -Base64 in -Java , [JDK Doc](https://docs.oracle.com/javase/10/docs/api/java/util/Base64.html) .
+
 
 # Base62x in -JavaScript
 
