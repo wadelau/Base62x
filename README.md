@@ -46,11 +46,14 @@ Base62x.decode(encodedString, outBase);
 ![base62x-design](http://ufqi.com/dev/base62x/Base62x-design-201702.v2.JPG)
 
 <a name="Paper"></a>
-# -Base62x Paper in IEEE 
+# -Base62x Papers 
 
-Article Number, 6020065 ;
+IEEE Article Number, 6020065 ;
 
 [ -R/p2SK ](http://ufqi.com/naturedns/search?q=-r/C2TZ) , page url in [ -URL4P ](http://ufqi.com/naturedns/search?q=-url4p) .
+
+[-Base62x in RearchGate, -R/12Sb ](http://ufqi.com/naturedns/search?q=-R/12Sb ) .
+
 
 <a name="c"></a>
 # base62x.c 
