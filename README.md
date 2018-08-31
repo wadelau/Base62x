@@ -1,3 +1,26 @@
+
+# Contents
+[Base62x Usage](#Usage)
+
+[Base62x Research Paper](#Paper)
+
+[-Base62x in C](#c)
+
+[-Base62x in -PHP](#php)
+
+[-Base62x in -Java](#java)
+
+[-Base62x in -JavaScript](#javascript)
+
+[-Base62x in -Perl](#perl)
+
+[-Base62x in -Python](#python)
+
+[-Base62x in C++](#cpp)
+
+[-Base62x in c#](#csharp)
+
+
 # -Base62x
 Base62x is an alternative approach to Base 64 without symbols in output.
 
@@ -9,7 +32,8 @@ Base62x is an alternative approach to Base 64 without symbols in output.
 
 [-Base62x Online](https://ufqi.com/naturedns/search?q=-base62x)
 
-# -Base62x Usage
+<a name="Usage"></a>
+# -Base62x Usage 
 
 Base62x.encode(myString);
 
@@ -21,13 +45,18 @@ Base62x.decode(encodedString, outBase);
 
 ![base62x-design](http://ufqi.com/dev/base62x/Base62x-design-201702.v2.JPG)
 
-# -Base62x Paper in IEEE
+<a name="Paper"></a>
+# -Base62x Papers 
 
-Article Number, 6020065 ;
+IEEE Article Number, 6020065 ;
 
 [ -R/p2SK ](http://ufqi.com/naturedns/search?q=-r/C2TZ) , page url in [ -URL4P ](http://ufqi.com/naturedns/search?q=-url4p) .
 
-# base62x.c
+[-Base62x in RearchGate, -R/12Sb ](http://ufqi.com/naturedns/search?q=-R/12Sb ) .
+
+
+<a name="c"></a>
+# base62x.c 
 
 ## base62x.c
 
@@ -50,7 +79,8 @@ shell> mi=0; umi=0; for i in {1..10000}; \
 	done
 ```
 
-# Base62x in -PHP
+<a name="php"></a>
+# Base62x in -PHP 
 
 ## base62x.class.php
 
@@ -83,7 +113,8 @@ print "[$s3_enc] decoded:[".($s3_dec=Base62x::decode($s3_enc))."]\n";
 ?>
 ```
 
-# Base62x in -Java
+<a name="java"></a>
+# Base62x in -Java 
 
 ## Base62x.class.jsp
 
@@ -137,8 +168,11 @@ out.println("<br/>["+s3+"] encoded:["+(s3_enc=Base62x.encode(s3))+"]");
 out.println("<br/>["+s3_enc+"] decoded:["+(s3_dec=Base62x.decode(s3_enc))+"]");
 
 %>
-```
 
+```
+It's an alternative option for -Base64 in -Java , [JDK Doc](https://docs.oracle.com/javase/10/docs/api/java/util/Base64.html) .
+
+<a name="javascript"></a>
 # Base62x in -JavaScript
 
 ## Base62x.class.js
@@ -165,16 +199,27 @@ npm install base62x
 ```
 by https://github.com/beaulac/node-base62x 
 
+<a name="perl"></a>
+# Base62x in -Perl 
 
-# Base62x in -Perl
+@todo
+
+
+<a name="python"></a>
+# Base62x in -Python 
 
 @todo
 
-
-
-# Base62x in -Python
+<a name="cpp"></a>
+# Base62x in -cplusplus / C++ 
 
 @todo
+
+<a name="csharp"></a>
+# Base62x in -csharp / C# 
+
+@todo
+
 
 
 

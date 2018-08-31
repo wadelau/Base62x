@@ -10,7 +10,7 @@
  * v0.5, Fri Feb 22 21:07:05 CST 2013, add -v mode for debug purpose
  * format refine, Sun Apr  7 21:43:22 CST 2013
  * v0.6, Sun May 26 22:27:29 CST 2013, add -n for numeric conversion, support bin|oct|dec|hex, adding -lm to gcc when compiling
- * 		for compile: gcc -lm base62x.c -o base62x
+ * 		for compile: gcc base62x.c -lm -o base62x
  * v0.7, Sun Apr  3 12:27:58 CST 2016, imprv for code format, output removing '\n' and relocated into -github-wadelau
  *		12:53 02 August 2016, improvs on codes.
  * v0.8, Fri Oct  7 11:34:21 CST 2016, numeric conversion imprvs, max_safe_base.
@@ -267,7 +267,7 @@ int main(int argc, char *argv[]){
 			do{
 				if(isdebug){
 					printf("i:[%d] n:[%d] char:[%c] ascidx:[%d] o:[%s]\n", i, input[i], 
-						input[i], ascrlist[input[i]], &output); 
+						input[i], ascrlist[input[i]], output); 
 				}
 				if(input[i] == xtag){
 					if( input[i+1] == xtag){
