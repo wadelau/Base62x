@@ -464,9 +464,13 @@ public static final class Base62x{
 				else{
 					tmpi = rb62x[iarr[i]];
 				}
+				if(tmpi >= ibase){
+					System.out.println("Base62x::xx2dec: found out of radix:"+tmpi+" for base:"+ibase);
+					tmpi = ibase - 1;
+				}
 				rtn += tmpi * Math.pow(ibase, (i-xnum));
 			}
-			//- oversize check
+			//- oversize check?
 			//- @todo
 		}
 		//System.out.print("static xx2dec: in:["+input+"] ibase:["+ibase+"] rtn:["+rtn+"] in 10.");
@@ -504,12 +508,14 @@ public static final class Base62x{
 				}
 			}
 			b = (int)num_input;
-			if(b <= bpos){
-				oarr[i++] = (char)b62x[b];
-			}
-			else{
-				oarr[i++] = (char)b62x[b-bpos];
-				oarr[i++] = xtag;
+			if(b > 0){
+				if(b <= bpos){
+					oarr[i++] = (char)b62x[b];
+				}
+				else{
+					oarr[i++] = (char)b62x[b-bpos];
+					oarr[i++] = xtag;
+				}
 			}
 			//Collections.reverse(oarr);
 			//rtn = oarr.join();

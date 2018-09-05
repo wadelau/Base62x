@@ -14,10 +14,8 @@
  * bugifx by _decodeByLength, 20:40 28 November 2016
  */
 
-
 class Base62x {
 
-	
 	# variables
 
 	var $isdebug = false;
@@ -42,7 +40,6 @@ class Base62x {
 		'O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b',
 		'c','d','e','f','g','h','i','j','k','l','m','n','o','p',
 		'q','r','s','t','u','v','w','y','z'); # 58 
-	
 	var $ascidx = array();
 	var $ascrlist = array();
 	const max_safe_base = 36;
@@ -82,8 +79,8 @@ class Base62x {
 			# string
 			$ascidx = array(); $ascrlist = array();
 			$inputArr = str_split($input); $inputlen = count($inputArr);
-			if(!isset($ascidx)){ $ascidx = array(); }
-			if(!isset($ascrlist)){ $ascrlist = array(); }
+			#if(!isset($ascidx)){ $ascidx = array(); }
+			#if(!isset($ascrlist)){ $ascrlist = array(); }
 			$setResult = self::setAscii($codetype, $inputArr, $ascidx, $ascmax, $asclist, $ascrlist);
 			$asctype = $setResult['asctype'];
 			$ascidx = $setResult['ascidx'];
@@ -109,7 +106,7 @@ class Base62x {
 					$m++;
 				}
 				while(++$i < $inputlen);
-				$op[++$m] = $xtag; # asctype has a tag 'x' appended
+				$op[$m] = $xtag; # asctype=1 has a tag 'x' appended
 			}
 			else{
 				$c0 = 0; $c1 = 0; $c2 = 0; $c3 = 0;
@@ -308,6 +305,10 @@ class Base62x {
 				else{
 					$tmpi = $ridx[$iArr[$i]];	
 				}
+				if($tmpi >= $ibase){
+					error_log(__FILE__.": xxdec found out of radix:$tmpi for base:$ibase.\n");
+					$tmpi = $ibase - 1;
+				}
 				$onum = $onum + $tmpi * pow($ibase, ($i - $xnum));	
 				#error_log(__FILE__.": xx2dec i:$i c:".$iArr[$i]." onum:$onum");
 			}
@@ -347,12 +348,14 @@ class Base62x {
 				}
 			}
 			$b = $inum;
-			if($b <= $bpos){
-				$oArr[$i++] = $idx[$b];
-			}
-			else{
-				$oArr[$i++] = $idx[$b - $bpos];
-				$oArr[$i++] = $xtag;
+			if($b > 0){
+				if($b <= $bpos){
+					$oArr[$i++] = $idx[$b];
+				}
+				else{
+					$oArr[$i++] = $idx[$b - $bpos];
+					$oArr[$i++] = $xtag;
+				}
 			}
 			$oArr = array_reverse($oArr);
 			$onum = implode($oArr);
@@ -367,7 +370,6 @@ class Base62x {
 
 	# fill reverse b62x
 	private static function fillRb62x($b62x, $bpos, $xpos){
-	
 		$rb62x = array();
 		for($i=0; $i<=$xpos; $i++){
 			if($i > $bpos && $i< $xpos){
@@ -377,9 +379,7 @@ class Base62x {
 				$rb62x[$b62x[$i]] = $i;	
 			}
 		}
-
 		return $rb62x;
-
 	}
 
 	# set ascii type
@@ -390,7 +390,7 @@ class Base62x {
 		$asctype = 0;
 		$xtag = self::XTAG;
 		$inputlen = count($inputArr);
-		if($codetype == 0 && $inputArr[0] <= $ascmax){
+		if($codetype == 0 && ord($inputArr[0]) <= $ascmax){
 			$asctype = 1;
 			for($i=1; $i<$inputlen; $i++){
 				$tmpi = ord($inputArr[$i]);
