@@ -18,7 +18,7 @@
 
 [-Base62x in C++](#cpp)
 
-[-Base62x in c#](#csharp)
+[-Base62x in C#](#csharp)
 
 
 # -Base62x
@@ -202,7 +202,33 @@ by https://github.com/beaulac/node-base62x
 <a name="perl"></a>
 # Base62x in -Perl 
 
-@todo
+Base62x.pm
+
+Usage: OOP Style
+```perl
+use Base62x;
+
+my $base62x = Base62x->new();
+my $str = “Hello World!\n”;
+my $encoded = $base62x->encode($str);
+$str = $base62x->decode($encoded);
+
+# numbers conversion
+my $i = 100;
+    # treas $i as base 10 and transform it into Base62x
+my $numInBase62x = $base62x->encode($i, 10);
+    # try to decode a Base62x num into base 10
+$i = $base62x->decode($numInBase62x, 10);
+
+```
+Usage: Functional Style
+```perl
+use Base62x qw (base62x_encode base62x_decode);
+
+my $str = “Hello World!\n”;
+my $encoded = base62x_encode($str);
+$str = base62x_decode($encoded);
+```
 
 
 <a name="python"></a>
