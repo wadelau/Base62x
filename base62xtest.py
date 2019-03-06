@@ -23,5 +23,14 @@ from Base62x import Base62x
 
 config = {};
 base62x = Base62x(config);
-base62x22 = Base62x();
+#base62x2 = Base62x();
+
+rawstr = "abcd1234";
+rawstr2 = "abcd中文1234";
+
+encstr = base62x.encode(rawstr);
+encstr2 = base62x.encode(rawstr2);
+
+print("rawstr:[{}] encstr:[{}]".format(rawstr, encstr));
+print("2 rawstr:[{}] encstr:[{}]".format(rawstr2, encstr2));
 
