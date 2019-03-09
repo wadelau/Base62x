@@ -25,12 +25,16 @@ config = {};
 base62x = Base62x(config);
 #base62x2 = Base62x();
 
-rawstr = "abcd1234";
-rawstr2 = "abcd中文1234";
+rawstr = "abcd1234x'efg89;01";
+rawstr = 'var _tkd = _tkd || []; //点击量统计用';
+rawstr2 = "abcd中文1234北京456;7-890";
 
 encstr = base62x.encode(rawstr);
 encstr2 = base62x.encode(rawstr2);
 
-print("rawstr:[{}] encstr:[{}]".format(rawstr, encstr));
-print("2 rawstr:[{}] encstr:[{}]".format(rawstr2, encstr2));
+decstr = base62x.decode(encstr);
+decstr2 = base62x.decode(encstr2);
+
+print("rawstr:[{}] encstr:[{}] decstr:[{}] eq:[{}]".format(rawstr, encstr, decstr, (rawstr==decstr)));
+print("2nd rawstr:[{}] encstr:[{}] decstr:[{}] eq:[{}]".format(rawstr2, encstr2, decstr2, (rawstr2==decstr2)));
 
