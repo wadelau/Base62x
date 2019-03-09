@@ -16,6 +16,7 @@
 * bugifx by _decodeByLength, 20:40 28 November 2016
 * Base62x in Perl, init, Thu Aug 30 20:49:27 CST 2018
 * Base62x in Perl, refine, Tue Sep  4 19:56:01 CST 2018
+* imprvs with decode, refer to Base62x in Python, Sat Mar  9 13:48:05 GMT 2019
 
 =cut
 
@@ -136,28 +137,7 @@ sub encode($ $) {
                 $remaini = $inputlen - $i;
                 $inputArr[$i] = ord($inputArr[$i]);
                 #print "".($i).": byte:[".$inputArr[$i]."] char:[".chr($inputArr[$i])."]\n";
-                if($remaini == 1){
-                    $c0 = $inputArr[$i] >> 2;
-                    $c1 = (($inputArr[$i] << 6) & 0xff) >> 6;
-                    if($c0 > $bpos){ $op[$m] = $xtag; $op[++$m] = $b62x[$c0]; }
-                    else{ $op[$m] = $b62x[$c0]; } 
-                    if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }
-                    else{ $op[++$m] = $b62x[$c1]; } 
-                }
-                elsif($remaini == 2){
-                    $inputArr[$i+1] = ord($inputArr[$i+1]);
-                    $c0 = $inputArr[$i] >> 2;
-                    $c1 = ((($inputArr[$i] << 6) & 0xff) >> 2) | ($inputArr[$i+1] >> 4);
-                    $c2 = (($inputArr[$i+1] << 4) & 0xff) >> 4;
-                    if($c0 > $bpos){ $op[$m] = $xtag; $op[++$m] = $b62x[$c0]; }
-                    else{ $op[$m] = $b62x[$c0]; } 
-                    if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }
-                    else{ $op[++$m] = $b62x[$c1]; } 
-                    if($c2 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c2]; }
-                    else{ $op[++$m] = $b62x[$c2]; } 
-                    $i += 1;
-                }
-                else{
+                if($remaini > 2){
                     $inputArr[$i+1] = ord($inputArr[$i+1]);
                     $inputArr[$i+2] = ord($inputArr[$i+2]);
                     $c0 = $inputArr[$i] >> 2;
@@ -173,6 +153,27 @@ sub encode($ $) {
                     if($c3 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c3]; }
                     else{ $op[++$m] = $b62x[$c3]; } 
                     $i += 2;
+                } 
+                elsif($remaini == 2){
+                    $inputArr[$i+1] = ord($inputArr[$i+1]);
+                    $c0 = $inputArr[$i] >> 2;
+                    $c1 = ((($inputArr[$i] << 6) & 0xff) >> 2) | ($inputArr[$i+1] >> 4);
+                    $c2 = (($inputArr[$i+1] << 4) & 0xff) >> 4;
+                    if($c0 > $bpos){ $op[$m] = $xtag; $op[++$m] = $b62x[$c0]; }
+                    else{ $op[$m] = $b62x[$c0]; } 
+                    if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }
+                    else{ $op[++$m] = $b62x[$c1]; } 
+                    if($c2 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c2]; }
+                    else{ $op[++$m] = $b62x[$c2]; } 
+                    $i += 1;
+                }
+                elsif($remaini == 1){
+                    $c0 = $inputArr[$i] >> 2;
+                    $c1 = (($inputArr[$i] << 6) & 0xff) >> 6;
+                    if($c0 > $bpos){ $op[$m] = $xtag; $op[++$m] = $b62x[$c0]; }
+                    else{ $op[$m] = $b62x[$c0]; } 
+                    if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }
+                    else{ $op[++$m] = $b62x[$c1]; } 
                 }
                 $m++; 
             }
@@ -239,48 +240,36 @@ sub decode($ $){
         else{
             # non-ascii
             my (@tmpArr, @arr, $arr) = ((), (), undef); my $remaini = 0;
-            my @bint = (0, 1, 2, 3);
+            my @bint = (0, 1, 2, 3); my $j = 0;
             do{
                 @tmpArr = (undef, undef, undef, undef);
                 $remaini = $inputlen - $i;
                 #print "".($i).": byte:[".$inputArr[$i]."] char:[".ord($inputArr[$i])."]\n";
-                if($remaini == 1){
+                if($remaini > 1){
+                    $j = 0;
+                    do{
+                        if($inputArr[$i] eq $xtag){ 
+                            $i++;
+                            $tmpArr[$j] = $bpos + $bint[$inputArr[$i]];
+                        }
+                        else{
+                            $tmpArr[$j] = $rb62x{$inputArr[$i]};
+                        }
+                        $i++; $j++;
+                    }
+                    while($j < 4 && $i < $inputlen);
+
+                    $arr = $self->_decodeByLength(\@tmpArr, \@op, $m);
+                    @arr = @{$arr}; @op = @{$arr[0]}; $m = $arr[1];
+ 
+                }
+                elsif($remaini == 1){
                     print($LOGTAG.": found illegal base62x input:[".$inputArr[$i]."]. 1608091042.");
                     next;
-                }
-                elsif($remaini == 2){
-                    if($inputArr[$i] eq $xtag){ $tmpArr[0] = $bpos + $bint[$inputArr[++$i]]; }
-                    else{$tmpArr[0] = $rb62x{$inputArr[$i]}; }
-                    if($inputArr[++$i] eq $xtag){ $tmpArr[1] = $bpos + $bint[$inputArr[++$i]]; }
-                    else{$tmpArr[1] = $rb62x{$inputArr[$i]}; }
-                    $arr = $self->_decodeByLength(\@tmpArr, \@op, $m);
-                    @arr = @{$arr}; @op = @{$arr[0]}; $m = $arr[1];
-                }
-                elsif($remaini == 3){
-                    if($inputArr[$i] eq $xtag){ $tmpArr[0] = $bpos + $bint[$inputArr[++$i]]; }
-                    else{$tmpArr[0] = $rb62x{$inputArr[$i]}; }
-                    if($inputArr[++$i] eq $xtag){ $tmpArr[1] = $bpos + $bint[$inputArr[++$i]]; }
-                    else{$tmpArr[1] = $rb62x{$inputArr[$i]}; }
-                    if($inputArr[++$i] eq $xtag){ $tmpArr[2] = $bpos + $bint[$inputArr[++$i]]; }
-                    else{$tmpArr[2] = $rb62x{$inputArr[$i]}; }
-                    $arr = $self->_decodeByLength(\@tmpArr, \@op, $m);
-                    @arr = @{$arr}; @op = @{$arr[0]}; $m = $arr[1];
-                }
-                else{
-                    if($inputArr[$i] eq $xtag){ $tmpArr[0] = $bpos + $bint[$inputArr[++$i]]; }
-                    else{$tmpArr[0] = $rb62x{$inputArr[$i]}; }
-                    if($inputArr[++$i] eq $xtag){ $tmpArr[1] = $bpos + $bint[$inputArr[++$i]]; }
-                    else{$tmpArr[1] = $rb62x{$inputArr[$i]}; }
-                    if($inputArr[++$i] eq $xtag){ $tmpArr[2] = $bpos + $bint[$inputArr[++$i]]; }
-                    else{$tmpArr[2] = $rb62x{$inputArr[$i]}; }
-                    if($inputArr[++$i] eq $xtag){ $tmpArr[3] = $bpos + $bint[$inputArr[++$i]]; }
-                    else{$tmpArr[3] = $rb62x{$inputArr[$i]}; }
-                    $arr = $self->_decodeByLength(\@tmpArr, \@op, $m);
-                    @arr = @{$arr}; @op = @{$arr[0]}; $m = $arr[1];
-                }
+                } 
                 $m++;
             }
-            while(++$i < $inputlen);
+            while($i < $inputlen);
         }
         $output = join('', @op);
     }

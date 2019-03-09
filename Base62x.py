@@ -258,9 +258,9 @@ class Base62x:
                                     tmpArr.append(rb62x[chr(inputArr[i])]);
                                 
                                 #print("i:[{}]/j:[{}] input:[{}] tmpArr:[{}]".format(i, j, inputArr[i], tmpArr));
-                                tmpArr2 = self._decodeByLength(tmpArr);
                                 i += 1; j += 1;
-
+							
+                            tmpArr2 = self._decodeByLength(tmpArr);
                             for ia in tmpArr2:
                                 op.append(ia);
             
