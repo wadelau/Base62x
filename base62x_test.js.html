@@ -3,7 +3,7 @@
 <head>
 	<meta charset='utf-8'>
 	<title>Base62x in JavaScript Test</title>
-	<script src="./Base62x.class.js"></script>
+	<script src="./Base62x.class.js?v=1903111031"></script>
 </head>
 <body>
 <div id="contentid">
@@ -29,8 +29,8 @@ var ostr = '';
 if(wobj){
 	ostr = wobj.innerHTML;
 	ostr += "Time: "+(new Date())+"<br/>";
-	ostr += "<br/>orgs:["+s+"]<br/>encs:["+encs+"]<br/>decs:["+decs+"]";
-	ostr += "<br/><br/>orgs:["+inum+"]<br/>encs:["+num_enc+"]<br/>decs:["+num_dec+"]";
+	ostr += "<br/>orgs:["+s+"]<br/>encs:["+encs+"]<br/>decs:["+decs+"] equals:["+(s==decs)+"]";
+	ostr += "<br/><br/>orgs:["+inum+"]<br/>encs:["+num_enc+"]<br/>decs:["+num_dec+"] equals:["+(inum==num_dec)+"]";
 	wobj.innerHTML = ostr;
 }
 else{
@@ -42,7 +42,7 @@ ostr += "<br/><br/>instanceOf: <br/>i:["+mybase62x.i+"] isdebug:["+mybase62x.isd
 encs = mybase62x.encode(s);
 decs = mybase62x.decode(encs);
 ostr += "<br/>encs:["+encs+"]";
-ostr += "<br/>decs:["+decs+"]";
+ostr += "<br/>decs:["+decs+"] equals:["+(s==decs)+"]";
 wobj.innerHTML = ostr;
 wobj = null;
 ostr = null;

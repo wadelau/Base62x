@@ -32,16 +32,19 @@ String s3 = "\"Tcler's Wiki: UTF-8 bit by bit (Revision 6)\". 2009-04-25. Retrie
 String s_enc, s_dec, s2_enc, s2_dec, s3_enc, s3_dec;
 s_enc = ""; s_dec = ""; s2_enc = ""; s2_dec = ""; s3_enc = ""; s3_dec = "";
 
-/*
+
+out.println("<br/>Time: ["+(new java.util.Date())+"]<br/>\n");
+
+if(true){
+
 out.println("<br/>["+s+"] encoded:["+(s_enc=Base62x.encode(s))+"]");
-out.println("<br/>["+s_enc+"] decoded:["+(s_dec=Base62x.decode(s_enc))+"]");
+out.println("<br/> decoded:["+(s_dec=Base62x.decode(s_enc))+"] eq:["+(s.equals(s_dec))+"]");
 
 out.println("<br/>["+s2+"] encoded:["+(s2_enc=Base62x.encode(s2))+"]");
-out.println("<br/>["+s2_enc+"] decoded:["+(s2_dec=Base62x.decode(s2_enc))+"]");
+out.println("<br/>decoded:["+(s2_dec=Base62x.decode(s2_enc))+"] eq:["+(s2.equals(s2_dec))+"]");
 
 out.println("<br/>["+s3+"] encoded:["+(s3_enc=Base62x.encode(s3))+"]");
-out.println("<br/>["+s3_enc+"] decoded:["+(s3_dec=Base62x.decode(s3_enc))+"]");
-*/
+out.println("<br/>decoded:["+(s3_dec=Base62x.decode(s3_enc))+"] eq:["+(s3.equals(s3_dec))+"] ");
 
 out.println("<br/><br/>Time:["+(new Date())+"] "+((new java.util.Random()).nextInt(999999)));
 
@@ -55,7 +58,7 @@ int faili2 = 0;
 String s_enc2;
 String s_dec2;
 int xcount = 0;
-int testcount = 3000;
+int testcount = 30;
 for(i=0; i<testcount; i++){
     s = Integer.toHexString(rd.nextInt(999999999)) 
     	+ "中a3" + Integer.toHexString(rd.nextInt(9999999)) 
@@ -112,7 +115,9 @@ for(i=0; i<testcount; i++){
 }
 
 System.out.println("i:["+i+"] succi:["+succi+"] faili:["+faili+"] done! xcount:["+xcount+"] perc:["+(xcount/testcount)+"]");
+out.println("i:["+i+"] succi:["+succi+"] faili:["+faili+"] done! xcount:["+xcount+"] perc:["+(xcount/testcount)+"]");
 System.out.println("i:["+i+"] succi2:["+succi2+"] faili:["+faili2+"] done!");
+out.println("i:["+i+"] succi2:["+succi2+"] faili:["+faili2+"] done!");
 
 byte[] bytearr = new byte[4];
 for(i=0; i<bytearr.length; i++){
@@ -124,5 +129,15 @@ String randi = rd.nextInt(1000)+"ab"+rd.nextInt(10000);
 s_enc = Base62x.encode(randi, ibase);
 s_dec = Base62x.decode(s_enc, obase);
 out.println("<br/>Number conversion:<br/>randi: ["+randi+"], encns:["+s_enc+"]<br/>decns:["+s_dec+"]");
+
+}
+
+int[] tmpArr = new int[]{-1, -1, -1, -1};
+
+tmpArr[0] = 10; tmpArr[1] = 11;
+
+for(int idx=0; idx<tmpArr.length; idx++){
+	out.println("i:"+idx+" v:["+tmpArr[idx]+"]\n");	
+}
 
 %>

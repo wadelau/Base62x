@@ -261,6 +261,7 @@ sub decode($ $){
 
                     $arr = $self->_decodeByLength(\@tmpArr, \@op, $m);
                     @arr = @{$arr}; @op = @{$arr[0]}; $m = $arr[1];
+                    # m is deprecated.
  
                 }
                 elsif($remaini == 1){

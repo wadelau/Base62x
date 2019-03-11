@@ -10,8 +10,10 @@
  *  Wed Aug 10 22:16:24 CST 2016
  *  Sat Aug 13 10:48:52 CST 2016
  *  bugfix by decodeByLength, Sat Dec  3 23:05:58 CST 2016
+ *  imprvs with decode, Mon Mar 11 04:12:02 UTC 2019
  */
  //- Assume We Are in Charset of UTF-8 Runtime
+
 %><%@page 
 	import="java.util.Date,
 		java.util.HashMap,
@@ -128,46 +130,43 @@ public static final class Base62x{
 				do{
 					remaini = inputlen - i;
 					tmpi = (int)inputArr[i]; tmpi = tmpi<0 ? (tmpi & 0xff) : tmpi; //- for minus byte	
-					switch(remaini){
-						case 1:
-							c0 = tmpi >> 2;
-							c1 = ((tmpi << 6) & 0xff) >> 6;
-							if(c0>bpos){ op[m]=xtag; op[++m]=b62x[c0]; }
-							else{ op[m]=b62x[c0]; }
-							if(c1>bpos){ op[++m]=xtag; op[++m]=b62x[c1]; }
-							else{ op[++m]=b62x[c1]; }
-							break;
-
-						case 2:
-							tmpj = (int)inputArr[i+1];	tmpj = tmpj<0 ? (tmpj & 0xff) : tmpj;	
-							c0 = tmpi >> 2;
-							c1 = (((tmpi << 6) & 0xff) >> 2) | (tmpj >> 4);
-							c2 = ((tmpj << 4) & 0xff) >> 4;
-							if(c0>bpos){ op[m]=xtag; op[++m]=b62x[c0]; }
-							else{ op[m]=b62x[c0]; }
-							if(c1>bpos){ op[++m]=xtag; op[++m]=b62x[c1]; }
-							else{ op[++m]=b62x[c1]; }
-							if(c2>bpos){ op[++m]=xtag; op[++m]=b62x[c2]; }
-							else{ op[++m]=b62x[c2]; }
-							i += 1;	
-							break;
-
-						default:
-							tmpj = (int)inputArr[i+1];	tmpj = tmpj<0 ? (tmpj & 0xff) : tmpj;	
-							tmpk = (int)inputArr[i+2];	tmpk = tmpk<0 ? (tmpk & 0xff) : tmpk;		
-							c0 = tmpi >> 2;
-							c1 = (((tmpi << 6) & 0xff) >> 2) | (tmpj >> 4);
-							c2 = (((tmpj << 4) & 0xff) >> 2) | (tmpk >> 6);
-							c3 = ((tmpk << 2) & 0xff) >> 2;
-							if(c0>bpos){ op[m]=xtag; op[++m]=b62x[c0]; }
-							else{ op[m]=b62x[c0]; }
-							if(c1>bpos){ op[++m]=xtag; op[++m]=b62x[c1]; }
-							else{ op[++m]=b62x[c1]; }
-							if(c2>bpos){ op[++m]=xtag; op[++m]=b62x[c2]; }
-							else{ op[++m]=b62x[c2]; }
-							if(c3>bpos){ op[++m]=xtag; op[++m]=b62x[c3]; }
-							else{ op[++m]=b62x[c3]; }
-							i += 2;	
+					if(remaini > 2){
+						tmpj = (int)inputArr[i+1];	tmpj = tmpj<0 ? (tmpj & 0xff) : tmpj;	
+						tmpk = (int)inputArr[i+2];	tmpk = tmpk<0 ? (tmpk & 0xff) : tmpk;		
+						c0 = tmpi >> 2;
+						c1 = (((tmpi << 6) & 0xff) >> 2) | (tmpj >> 4);
+						c2 = (((tmpj << 4) & 0xff) >> 2) | (tmpk >> 6);
+						c3 = ((tmpk << 2) & 0xff) >> 2;
+						if(c0>bpos){ op[m]=xtag; op[++m]=b62x[c0]; }
+						else{ op[m]=b62x[c0]; }
+						if(c1>bpos){ op[++m]=xtag; op[++m]=b62x[c1]; }
+						else{ op[++m]=b62x[c1]; }
+						if(c2>bpos){ op[++m]=xtag; op[++m]=b62x[c2]; }
+						else{ op[++m]=b62x[c2]; }
+						if(c3>bpos){ op[++m]=xtag; op[++m]=b62x[c3]; }
+						else{ op[++m]=b62x[c3]; }
+						i += 2;	
+					}
+					else if(remaini == 2){
+						tmpj = (int)inputArr[i+1];	tmpj = tmpj<0 ? (tmpj & 0xff) : tmpj;	
+						c0 = tmpi >> 2;
+						c1 = (((tmpi << 6) & 0xff) >> 2) | (tmpj >> 4);
+						c2 = ((tmpj << 4) & 0xff) >> 4;
+						if(c0>bpos){ op[m]=xtag; op[++m]=b62x[c0]; }
+						else{ op[m]=b62x[c0]; }
+						if(c1>bpos){ op[++m]=xtag; op[++m]=b62x[c1]; }
+						else{ op[++m]=b62x[c1]; }
+						if(c2>bpos){ op[++m]=xtag; op[++m]=b62x[c2]; }
+						else{ op[++m]=b62x[c2]; }
+						i += 1;	
+					}
+					else{ //- == 1
+						c0 = tmpi >> 2;
+						c1 = ((tmpi << 6) & 0xff) >> 6;
+						if(c0>bpos){ op[m]=xtag; op[++m]=b62x[c0]; }
+						else{ op[m]=b62x[c0]; }
+						if(c1>bpos){ op[++m]=xtag; op[++m]=b62x[c1]; }
+						else{ op[++m]=b62x[c1]; }
 					}
 					m++;
 				}
@@ -223,7 +222,7 @@ public static final class Base62x{
 			int i=0; int m=0; 
 
 			if(isasc){
-				//- ascii
+				//- ascii string
 				byte b = 0;
 				inputlen--;
 				do{
@@ -245,106 +244,39 @@ public static final class Base62x{
 				while(++i < inputlen);
 			}
 			else{
-				//- non-ascii	
+				//- non-ascii string
 				int c0=0; int c1=0;	int c2=0;
-				int remaini = 0; 
-				int maxidx = inputlen - 1; int last8 = inputlen - 8; //- avoid outofArrayIndex
-				int[] tmpArr = new int[4];
+				int remaini = 0; int j = 0; HashMap tmphm = new HashMap();
+				int[] tmpArr = new int[]{-1, -1, -1, -1}; //- expected range 0 ~ 63
 				int[] bint = new int[xpos]; bint[49]=1; bint[50]=2; bint[51]=3; //- array('1'=>1, '2'=>2, '3'=>3);
 				do{
 					remaini = inputlen - i;
-					tmpArr = new int[4];
-					switch(remaini){
-						case 1:
-							System.out.println("Base62x.decode: illegal base62x input:["+input+"]. 1608091042.");
-							break;
-
-						case 2:
-							if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }
-							else{ tmpArr[0]=rb62x[inputArr[i]]; }
-							if(i == maxidx){
-								c0 = (tmpArr[0] << 2);
-								op[m] = (byte)c0;
+					tmpArr = new int[]{-1, -1, -1, -1}; 
+					if(remaini > 1){
+						j = 0;
+						do{
+							if(inputArr[i] == xtag){
+								i++;
+								tmpArr[j] = bpos + bint[inputArr[i]];
 							}
 							else{
-								if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }
-								else{ tmpArr[1]=rb62x[inputArr[i]]; }
-								c0 = (tmpArr[0] << 2) | tmpArr[1];
-								op[m] = (byte)c0;
+								tmpArr[j] = rb62x[inputArr[i]];
 							}
-							break;
-
-						case 3: 
-							if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }
-							else{ tmpArr[0]=rb62x[inputArr[i]]; }
-							if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }
-							else{ tmpArr[1]=rb62x[inputArr[i]]; }
-							if(i == maxidx){
-								c0 = (tmpArr[0] << 2) | tmpArr[1];
-								op[m] = (byte)c0;
-							}
-							else{
-								if(inputArr[++i]==xtag){ tmpArr[2]=bpos+bint[inputArr[++i]]; }
-								else{ tmpArr[2]=rb62x[inputArr[i]]; }
-								c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4);
-								c1 = ((tmpArr[1] << 4) & 0xf0) | tmpArr[2];
-								op[m] = (byte)c0;
-								op[++m] = (byte)c1;
-							}
-							break;
-
-						default:
-							if(i < last8){
-								if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }
-								else{ tmpArr[0]=rb62x[inputArr[i]]; }
-								if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }
-								else{ tmpArr[1]=rb62x[inputArr[i]]; }
-								if(inputArr[++i]==xtag){ tmpArr[2]=bpos+bint[inputArr[++i]]; }
-								else{ tmpArr[2]=rb62x[inputArr[i]]; }
-								if(inputArr[++i]==xtag){ tmpArr[3]=bpos+bint[inputArr[++i]]; }
-								else{ tmpArr[3]=rb62x[inputArr[i]]; }
-								c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4); 
-								c1 = ((tmpArr[1] << 4) & 0xf0) | (tmpArr[2] >> 2); 
-								c2 = ((tmpArr[2] << 6) & 0xff) | tmpArr[3];
-								op[m] = (byte)c0;
-								op[++m] = (byte)c1;
-								op[++m] = (byte)c2;
-							}
-							else{
-								if(inputArr[i]==xtag){ tmpArr[0]=bpos+bint[inputArr[++i]]; }
-								else{ tmpArr[0]=rb62x[inputArr[i]]; }
-								if(inputArr[++i]==xtag){ tmpArr[1]=bpos+bint[inputArr[++i]]; }
-								else{ tmpArr[1]=rb62x[inputArr[i]]; }
-								if(i == maxidx){
-									c0 = (tmpArr[0] << 2) | tmpArr[1];
-									op[m] = (byte)c0;
-								}
-								else{
-									if(inputArr[++i]==xtag){ tmpArr[2]=bpos+bint[inputArr[++i]]; }
-									else{ tmpArr[2]=rb62x[inputArr[i]]; }
-									if(i == maxidx){
-										c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4);
-										c1 = ((tmpArr[1] << 4) & 0xf0) | tmpArr[2];
-										op[m] = (byte)c0;
-										op[++m] = (byte)c1;
-									}
-									else{
-										if(inputArr[++i]==xtag){ tmpArr[3]=bpos+bint[inputArr[++i]]; }
-										else{ tmpArr[3]=rb62x[inputArr[i]]; }
-										c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4); 
-										c1 = ((tmpArr[1] << 4) & 0xf0) | (tmpArr[2] >> 2); 
-										c2 = ((tmpArr[2] << 6) & 0xff) | tmpArr[3];
-										op[m] = (byte)c0;
-										op[++m] = (byte)c1;
-										op[++m] = (byte)c2;
-									}
-								}
-
-							}
+							i++; j++;
+						}
+						while(j < 4 && i < inputlen);
+							
+						tmphm = Base62x._decodeByLength(tmpArr, op, m);
+						op = (byte[])tmphm.get(0);
+						m = (int)tmphm.get(1); //- deprecated.
+					}
+					else{ //- == 1
+						System.out.println("Base62x.decode: illegal base62x input:["+input+"]. 1608091042.");
+						continue;
 					}
 					m++;
 				}
-				while(++i < inputlen);				
+				while(i < inputlen);				
 			}
 			byte[] op2 = new byte[m];
 			System.arraycopy(op, 0, op2, 0, m);	
@@ -527,13 +459,37 @@ public static final class Base62x{
 	
 	//- fix variable length of encoded string
 	//- Dec 01, 2016
-	private static byte[] _decodeByLength(int[] tmpArr, byte[] op, int m){
-		byte[] rtn = op;
-
+	//- refine, Mon Mar 11 04:55:07 UTC 2019
+	private static HashMap _decodeByLength(int[] tmpArr, byte[] op, int m){
 		//- @todo replace ArrayIndexOutOfBoundsException and variable tmpArr in decode	
+		HashMap rtnhm = new HashMap();
+		int c0=0; int c1=0;	int c2=0;
 
-		rtn[m++] = (byte)m; //- ?
-		return rtn;
+		if(tmpArr[3] > -1){
+			c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4); 
+			c1 = ((tmpArr[1] << 4) & 0xf0) | (tmpArr[2] >> 2); 
+			c2 = ((tmpArr[2] << 6) & 0xff) | tmpArr[3];
+			op[m] = (byte)c0;
+			op[++m] = (byte)c1;
+			op[++m] = (byte)c2;
+		}
+		else if(tmpArr[2] > -1){
+			c0 = (tmpArr[0] << 2) | (tmpArr[1] >> 4);
+			c1 = ((tmpArr[1] << 4) & 0xf0) | tmpArr[2];
+			op[m] = (byte)c0;
+			op[++m] = (byte)c1;
+		}
+		else if(tmpArr[1] > -1){
+			c0 = (tmpArr[0] << 2) | tmpArr[1];
+			op[m] = (byte)c0;
+		}
+		else{
+			c0 = tmpArr[0];
+			op[m] = (byte)c0;
+		}
+
+		rtnhm.put(0, op); rtnhm.put(1, m);
+		return rtnhm;
 	}
 
 }

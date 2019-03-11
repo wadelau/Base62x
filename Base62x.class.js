@@ -7,6 +7,7 @@
  	https://github.com/wadelau/Base62x
  	https://ufqi.com/dev/base62x/?_via=-naturedns
  * v0.8, 21:49 12 February 2017
+ * v0.9, imprvs with decode, Mon Mar 11 02:09:55 GMT 2019
  */
  
  'use strict';
@@ -85,42 +86,41 @@
 				var c0=0; var c1=0; var c2=0; var c3=0; var remaini=0;
 				do{
 					remaini = inputlen - i;
-					switch(remaini){
-						case 1:
-							c0 = inputArr[i] >> 2;
-							c1 = ((inputArr[i] << 6) & 0xff) >> 6;
-							if(c0 > bpos){ op[m] = xtag; op[++m] = b62x[c0]; }
-							else{ op[m] = b62x[c0]; }
-							if(c1 > bpos){ op[++m] = xtag; op[++m] = b62x[c1]; }
-							else{ op[++m] = b62x[c1];}
-							break;
-						case 2:
-							c0 = inputArr[i] >> 2;
-							c1 = (((inputArr[i] << 6) & 0xff) >> 2) | (inputArr[i+1] >> 4);
-							c2 = ((inputArr[i+1] << 4) & 0xff) >> 4;
-							if(c0 > bpos){ op[m] = xtag; op[++m] = b62x[c0]; }
-							else{ op[m] = b62x[c0]; }
-							if(c1 > bpos){ op[++m] = xtag; op[++m] = b62x[c1]; }
-							else{ op[++m] = b62x[c1];}
-							if(c2 > bpos){ op[++m] = xtag; op[++m] = b62x[c2]; }
-							else{ op[++m] = b62x[c2];}
-							i += 1;
-							break;
-						default:
-							c0 = inputArr[i] >> 2;
-							c1 = (((inputArr[i] << 6) & 0xff) >> 2) | (inputArr[i+1] >> 4);
-							c2 = (((inputArr[i+1] << 4) & 0xff) >> 2) | (inputArr[i+2] >> 6);
-							c3 = ((inputArr[i+2] << 2) & 0xff) >> 2;
-							if(c0 > bpos){ op[m] = xtag; op[++m] = b62x[c0]; }
-							else{ op[m] = b62x[c0]; }
-							if(c1 > bpos){ op[++m] = xtag; op[++m] = b62x[c1]; }
-							else{ op[++m] = b62x[c1];}
-							if(c2 > bpos){ op[++m] = xtag; op[++m] = b62x[c2]; }
-							else{ op[++m] = b62x[c2];}
-							if(c3 > bpos){ op[++m] = xtag; op[++m] = b62x[c3]; }
-							else{ op[++m] = b62x[c3];}
-							i += 2;
-					}
+                    if(remaini > 2){
+                        c0 = inputArr[i] >> 2;
+                        c1 = (((inputArr[i] << 6) & 0xff) >> 2) | (inputArr[i+1] >> 4);
+                        c2 = (((inputArr[i+1] << 4) & 0xff) >> 2) | (inputArr[i+2] >> 6);
+                        c3 = ((inputArr[i+2] << 2) & 0xff) >> 2;
+                        if(c0 > bpos){ op[m] = xtag; op[++m] = b62x[c0]; }
+                        else{ op[m] = b62x[c0]; }
+                        if(c1 > bpos){ op[++m] = xtag; op[++m] = b62x[c1]; }
+                        else{ op[++m] = b62x[c1];}
+                        if(c2 > bpos){ op[++m] = xtag; op[++m] = b62x[c2]; }
+                        else{ op[++m] = b62x[c2];}
+                        if(c3 > bpos){ op[++m] = xtag; op[++m] = b62x[c3]; }
+                        else{ op[++m] = b62x[c3];}
+                        i += 2; 
+                    }
+                    else if(remaini == 2){
+                        c0 = inputArr[i] >> 2;
+                        c1 = (((inputArr[i] << 6) & 0xff) >> 2) | (inputArr[i+1] >> 4);
+                        c2 = ((inputArr[i+1] << 4) & 0xff) >> 4;
+                        if(c0 > bpos){ op[m] = xtag; op[++m] = b62x[c0]; }
+                        else{ op[m] = b62x[c0]; }
+                        if(c1 > bpos){ op[++m] = xtag; op[++m] = b62x[c1]; }
+                        else{ op[++m] = b62x[c1];}
+                        if(c2 > bpos){ op[++m] = xtag; op[++m] = b62x[c2]; }
+                        else{ op[++m] = b62x[c2];}
+                        i += 1;
+                    }
+                    else{ // ==1
+                        c0 = inputArr[i] >> 2;
+                        c1 = ((inputArr[i] << 6) & 0xff) >> 6;
+                        if(c0 > bpos){ op[m] = xtag; op[++m] = b62x[c0]; }
+                        else{ op[m] = b62x[c0]; }
+                        if(c1 > bpos){ op[++m] = xtag; op[++m] = b62x[c1]; }
+                        else{ op[++m] = b62x[c1];}
+                    }
 					m++;
 				}
 				while(++i < inputlen);
@@ -194,7 +194,7 @@
 				var tmpArr = []; var tmprtn = {};
 				var bint = {1:1, 2:2, 3:3};
 				var remaini = 0;
-				var rki = 0;
+				var rki = 0; var j = 0;
 				for(var rk in rb62x){ // for char and its ascii value as key
 					rki = rk.charCodeAt();
 					rb62x[rki] = rb62x[rk];
@@ -206,46 +206,31 @@
 				do{
 					tmpArr = [];
 					remaini = inputlen - i;
-					switch(remaini){
-						case 1:
-							console.log('static decode: illegal base62x input:['+inputArr[i]+']. 1702122106.');
-							break;
-						case 2:
-							if(inputArr[i] == ixtag){ tmpArr[0] = bpos + bint[inputArr[++i]]; }
-							else{ tmpArr[0] = rb62x[inputArr[i]]; }
-							if(inputArr[++i] == ixtag){ tmpArr[1] = bpos + bint[inputArr[++i]]; }
-							else{ tmpArr[1] = rb62x[inputArr[i]]; }
-							tmprtn = this.decodeByLength(tmpArr, op, m);
-							op = tmprtn[0];
-							m = tmprtn[1];
-							break;
-						case 3:
-							if(inputArr[i] == ixtag){ tmpArr[0] = bpos + bint[inputArr[++i]]; }
-							else{ tmpArr[0] = rb62x[inputArr[i]]; }
-							if(inputArr[++i] == ixtag){ tmpArr[1] = bpos + bint[inputArr[++i]]; }
-							else{ tmpArr[1] = rb62x[inputArr[i]]; }
-							if(inputArr[++i] == ixtag){ tmpArr[2] = bpos + bint[inputArr[++i]]; }
-							else{ tmpArr[2] = rb62x[inputArr[i]]; }
-							tmprtn = this.decodeByLength(tmpArr, op, m);
-							op = tmprtn[0];
-							m = tmprtn[1];
-							break;
-						default:
-							if(inputArr[i] == ixtag){ tmpArr[0] = bpos + bint[inputArr[++i]]; }
-							else{ tmpArr[0] = rb62x[inputArr[i]]; }
-							if(inputArr[++i] == ixtag){ tmpArr[1] = bpos + bint[inputArr[++i]]; }
-							else{ tmpArr[1] = rb62x[inputArr[i]]; }
-							if(inputArr[++i] == ixtag){ tmpArr[2] = bpos + bint[inputArr[++i]]; }
-							else{ tmpArr[2] = rb62x[inputArr[i]]; }
-							if(inputArr[++i] == ixtag){ tmpArr[3] = bpos + bint[inputArr[++i]]; }
-							else{ tmpArr[3] = rb62x[inputArr[i]]; }
-							tmprtn = this.decodeByLength(tmpArr, op, m);
-							op = tmprtn[0];
-							m = tmprtn[1];
-					}
+                    if(remaini > 1){
+                        j = 0;
+                        do{
+							if(inputArr[i] == ixtag){
+                                i++;
+                                tmpArr[j] = bpos + bint[inputArr[i]]; 
+                            }
+							else{
+                                tmpArr[j] = rb62x[inputArr[i]];
+                            }
+							i++; j++;
+                        }
+                        while(j < 4 && i < inputlen);
+
+					    tmprtn = this.decodeByLength(tmpArr, op, m);
+						op = tmprtn[0];
+						m = tmprtn[1]; //- deprecated.
+                    }
+                    else{
+                        console.log('static decode: illegal base62x input:['+inputArr[i]+']. 1702122106.');
+                        continue;
+                    }
 					m++;
 				}
-				while(++i < inputlen);
+				while(i < inputlen);
 				//console.log('static dec: op:['+op+'] asctype:['+asctype+'] inputArr:['+inputArr+'] tmpstr:['+tmpstr+']');
 				rtn = this.toUTF16Array(op).join(''); //String.fromCharCode.apply(null, new Uint8Array(op));
 			}

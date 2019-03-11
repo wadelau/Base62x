@@ -267,7 +267,7 @@ class Base62x:
                         elif remaini == 1:
                             print("{} found illegal input:[{}]. 1903091005. i:[{}]"
                                 .format(self.LogTag, inputArr[i], i));
-                            break;
+                            continue;
                         
                         m += 1;
                     
