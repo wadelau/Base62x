@@ -239,7 +239,28 @@ $str = base62x_decode($encoded);
 <a name="python"></a>
 # Base62x in -Python 
 
-@todo
+Base62x.py
+
+Usage: OOP style
+
+```python
+
+# import Base62x.py
+from Base62x import Base62x
+
+# initialize
+base62x = Base62x();
+
+rawstr = “abcd1234x’efg89;01”;
+encstr = base62x.encode(rawstr);
+decstr = base62x.decode(encstr);
+
+```
+
+Base62x_test.py
+
+Test cases for Base62x in Python.
+
 
 <a name="cpp"></a>
 # Base62x in -cplusplus / C++ 
