@@ -44,6 +44,7 @@ class Base62x {
 	var $ascidx = array();
 	var $ascrlist = array();
 	const max_safe_base = 36;
+    const base59 = 59; # static $rb62xyz = array(); static $b62xyz = array();
 	static $ver = 0.9;
 	
 
@@ -152,50 +153,7 @@ class Base62x {
                         if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }
                         else{ $op[++$m] = $b62x[$c1]; }  
                     }
-                    /*
-					switch($remaini){
-						case 1:
-							$c0 = $inputArr[$i] >> 2;
-							$c1 = (($inputArr[$i] << 6) & 0xff) >> 6;
-							if($c0 > $bpos){ $op[$m] = $xtag; $op[++$m] = $b62x[$c0]; }
-							else{ $op[$m] = $b62x[$c0]; } 
-							if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }
-							else{ $op[++$m] = $b62x[$c1]; } 
-							break;
-
-						case 2:
-							$inputArr[$i+1] = ord($inputArr[$i+1]);
-							$c0 = $inputArr[$i] >> 2;
-							$c1 = ((($inputArr[$i] << 6) & 0xff) >> 2) | ($inputArr[$i+1] >> 4);
-							$c2 = (($inputArr[$i+1] << 4) & 0xff) >> 4;
-							if($c0 > $bpos){ $op[$m] = $xtag; $op[++$m] = $b62x[$c0]; }
-							else{ $op[$m] = $b62x[$c0]; } 
-							if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }
-							else{ $op[++$m] = $b62x[$c1]; } 
-							if($c2 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c2]; }
-							else{ $op[++$m] = $b62x[$c2]; } 
-							$i += 1;
-							break;
-
-						default:
-							$inputArr[$i+1] = ord($inputArr[$i+1]);
-							$inputArr[$i+2] = ord($inputArr[$i+2]);
-							$c0 = $inputArr[$i] >> 2;
-							$c1 = ((($inputArr[$i] << 6) & 0xff) >> 2) | ($inputArr[$i+1] >> 4);
-							$c2 = ((($inputArr[$i+1] << 4) & 0xff) >> 2) | ($inputArr[$i+2] >> 6);
-							$c3 = (($inputArr[$i+2] << 2) & 0xff) >> 2;
-							if($c0 > $bpos){ $op[$m] = $xtag; $op[++$m] = $b62x[$c0]; }
-							else{ $op[$m] = $b62x[$c0]; } 
-							if($c1 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c1]; }
-							else{ $op[++$m] = $b62x[$c1]; } 
-							if($c2 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c2]; }
-							else{ $op[++$m] = $b62x[$c2]; } 
-							if($c3 > $bpos){ $op[++$m] = $xtag; $op[++$m] = $b62x[$c3]; }
-							else{ $op[++$m] = $b62x[$c3]; } 
-							$i += 2;	
-					}
-                    */
-					$m++;
+   					$m++;
 				}
 				while(++$i < $inputlen);
 			}
@@ -264,7 +222,6 @@ class Base62x {
 				while(++$i < $inputlen);
 			}
 			else{
-				//$c0 = 0; $c1 = 0; $c2 = 0;
 				$tmpArr = array();
 				$bint = array('1'=>1, '2'=>2, '3'=>3);
 				do{
@@ -292,49 +249,7 @@ class Base62x {
 						error_log(__FILE__.": found illegal base62x input:[".$inputArr[$i]."]. 1608091042.");
                         continue;
                     }
-                    /*
-					switch($remaini){
-						case 1:
-							error_log(__FILE__.": found illegal base62x input:[".$inputArr[$i]."]. 1608091042.");
-							break;
-						
-						case 2:
-							if($inputArr[$i] == $xtag){ $tmpArr[0] = $bpos + $bint[$inputArr[++$i]]; }
-							else{$tmpArr[0] = $rb62x[$inputArr[$i]]; }
-							if($inputArr[++$i] == $xtag){ $tmpArr[1] = $bpos + $bint[$inputArr[++$i]]; }
-							else{$tmpArr[1] = $rb62x[$inputArr[$i]]; }
-							$arr = self::_decodeByLength($tmpArr, $op, $m);
-							$op = $arr[0];
-							$m = $arr[1];
-							break;	
-
-						case 3:
-							if($inputArr[$i] == $xtag){ $tmpArr[0] = $bpos + $bint[$inputArr[++$i]]; }
-							else{$tmpArr[0] = $rb62x[$inputArr[$i]]; }
-							if($inputArr[++$i] == $xtag){ $tmpArr[1] = $bpos + $bint[$inputArr[++$i]]; }
-							else{$tmpArr[1] = $rb62x[$inputArr[$i]]; }
-							if($inputArr[++$i] == $xtag){ $tmpArr[2] = $bpos + $bint[$inputArr[++$i]]; }
-							else{$tmpArr[2] = $rb62x[$inputArr[$i]]; }
-							$arr = self::_decodeByLength($tmpArr, $op, $m);
-							$op = $arr[0];
-							$m = $arr[1];
-							break;
-
-						default:
-							if($inputArr[$i] == $xtag){ $tmpArr[0] = $bpos + $bint[$inputArr[++$i]]; }
-							else{$tmpArr[0] = $rb62x[$inputArr[$i]]; }
-							if($inputArr[++$i] == $xtag){ $tmpArr[1] = $bpos + $bint[$inputArr[++$i]]; }
-							else{$tmpArr[1] = $rb62x[$inputArr[$i]]; }
-							if($inputArr[++$i] == $xtag){ $tmpArr[2] = $bpos + $bint[$inputArr[++$i]]; }
-							else{$tmpArr[2] = $rb62x[$inputArr[$i]]; }
-							if($inputArr[++$i] == $xtag){ $tmpArr[3] = $bpos + $bint[$inputArr[++$i]]; }
-							else{$tmpArr[3] = $rb62x[$inputArr[$i]]; }
-							$arr = self::_decodeByLength($tmpArr, $op, $m);
-							$op = $arr[0];
-							$m = $arr[1];
-					}
-                    */
-					$m++;
+                    $m++;
 				}
 				while($i < $inputlen);
 			}
@@ -351,10 +266,21 @@ class Base62x {
 		$onum = 0;
 		$obase = 10; $xtag = self::XTAG; $bpos = self::bpos;
 		$safebase = self::max_safe_base;
+        $base59 = self::base59; $xpos = self::xpos;
 		if($ibase <= $safebase){
 			$onum = base_convert($inum, $ibase, $obase);
 		}
 		else{
+            if($ibase > $base59 && $ibase < $xpos){
+                # base 60, 61, 62 or sth, reset ridx table
+                #$ridx = $self->rb62xyz;
+                $ridx_in = array();
+                foreach($ridx as $rk=>$rv){
+                    $ridx_in[$rk] = $rv;
+                }
+                $ridx_in['x'] = 59; $ridx_in['y'] = 60; $ridx_in['z'] = 61;
+                $ridx= $ridx_in;
+            }
 			$iArr = str_split($inum);
 			$iArr = array_reverse($iArr);
 			$arrLen = count($iArr);
@@ -373,7 +299,7 @@ class Base62x {
 					$tmpi = $ibase - 1;
 				}
 				$onum = $onum + $tmpi * pow($ibase, ($i - $xnum));	
-				#error_log(__FILE__.": xx2dec i:$i c:".$iArr[$i]." onum:$onum");
+				#error_log("\t".__FILE__.": xx2dec ibase:$ibase i:$i c:".$iArr[$i]." tmpi:$tmpi onum:$onum xnum:$xnum");
 			}
 			if(strpos($onum, 'E') !== false){
 				error_log(__FILE__.": Base62x::xx2dec: lost precision due to too large number:[$onum]. consider using bc math. 1610072145.");
@@ -392,11 +318,21 @@ class Base62x {
 		$onum = 0;
 		$ibase = 10; $xtag = self::XTAG; $bpos = self::bpos;
 		$safebase = self::max_safe_base;
+        $base59 = self::base59; $xpos = self::xpos;
 		#error_log(__FILE__.": dec2xx: 0 inindec:$inum obase:$obase");
 		if($obase <= $safebase){
 			$onum = base_convert($inum, $ibase, $obase);
 		}
 		else{
+            if($obase > $base59 && $obase < $xpos){
+                #$idx = self::b62xyz;
+                $idx_in = array();
+                foreach($idx as $ik=>$iv){
+                    $idx_in[$ik] = $iv;
+                }
+                $idx_in[59] = 'x'; $idx_in[60] = 'y'; $idx_in[61] = 'z';
+                $idx = $idx_in;
+            }
 			$i = 0; $b = 0;
 			$oArr = array();
 			while($inum >= $obase){
@@ -409,6 +345,8 @@ class Base62x {
 					$oArr[$i++] = $idx[$b - $bpos];
 					$oArr[$i++] = $xtag;
 				}
+                #print "i:$i inum:$inum b:$b obase:$obase\n";
+                #print_r($oArr);
 			}
 			$b = $inum;
 			if($b > 0){
@@ -421,6 +359,7 @@ class Base62x {
 				}
 			}
 			$oArr = array_reverse($oArr);
+            #print_r($oArr);
 			$onum = implode($oArr);
 		}
 		#error_log(__FILE__.": dec2xx: 1 inindec:$inum obase:$obase out:".($onum));
@@ -441,7 +380,7 @@ class Base62x {
 			else{
 				$rb62x[$b62x[$i]] = $i;	
 			}
-		}
+		} 
 		return $rb62x;
 	}
 

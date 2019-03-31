@@ -15,6 +15,7 @@ import sys
 import time
 from datetime import date, datetime
 import logging as logx
+import random
 
 # self define modules
 sys.path.append("./") # pay attention!
@@ -38,3 +39,28 @@ decstr2 = base62x.decode(encstr2);
 print("rawstr:[{}] encstr:[{}] decstr:[{}] eq:[{}]".format(rawstr, encstr, decstr, (rawstr==decstr)));
 print("2nd rawstr:[{}] encstr:[{}] decstr:[{}] eq:[{}]".format(rawstr2, encstr2, decstr2, (rawstr2==decstr2)));
 
+
+a = 101010;
+for i in range(2, 37):
+    b = int(str(a), i);
+    #print("i:{} b:{:02x} b10:{} a:{}".format(i, b, b, a));
+
+ibase = 60; succc = 0; failc = 0; num = 0;
+while num < 10000000:
+    for ibase in range(10, 61):
+        a = num;
+        encstr = base62x.encode(a, ibase);
+        decstr = base62x.decode(encstr, ibase);
+        if str(a) == str(decstr):
+            succc += 1;
+        else:
+            failc += 1;
+        print("ibase:{} a:{} encstr:{} decstr:{} eq:{} succ:{} fail:{}".format(ibase, a, encstr, decstr, (str(a)==str(decstr)), succc, failc));
+
+    randi = random.randint(0, 10000);
+    num += randi;
+
+ibase = 16;
+encstr = base62x.encode(a, ibase);
+decstr = base62x.decode(encstr, ibase);
+print("ibase:{} a:{} encstr:{} decstr:{}".format(ibase, a, encstr, decstr));

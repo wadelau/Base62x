@@ -12,6 +12,7 @@
 #    https://ufqi.com/dev/base62x/?_via=-naturedns
 # since  Mon Mar  4 08:28:16 GMT 2019
 # alpha, Sat Mar  9 04:41:44 GMT 2019
+# first release, Sat Mar 30 08:12:33 GMT 2019
 
 import sys, traceback, time
 from datetime import date, datetime
@@ -20,23 +21,23 @@ import logging as logx
 # self define modules
 sys.path.append("./") # pay attention!
 
-#
+# main body
 class Base62x:
     
     # global variables
 
-    # constants
+    ## constants
     VER = 1.0;
     XTAG = 'x';
     UTF8Tag = 'utf-8';
     LogTag = 'Base62x';
     isdebug = False; # True;
 
-    bpos, xpos, ascmax, max_safe_base = 60, 64, 126, 36;
+    bpos, xpos, ascmax, max_safe_base, base59 = 60, 64, 126, 36, 59;
 
     codetype = 0; # 0 for enc, 1 for dec
 
-    # 0-60 chars, b62x[64] = 'x'
+    ## 0-60 chars, b62x[64] = 'x'
     b62x = ['0','1','2','3','4','5','6','7','8','9',
             'A','B','C','D','E','F','G','H','I','J','K','L','M','N',
             'O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b',
@@ -53,13 +54,14 @@ class Base62x:
         # do something
         self.argv = argv; # no args?
         self.rb62x = {}; self.ascidx = {}; self.ascrlist = {};
+        self.rb62xyz = {}; self.b62xyz = []; # 0-9A-Za-z
         self._fillRb62x();
         #print("rb62x:{}".format(self.rb62x));
         return None;
 
 
     # public methods
-    # encode
+    ## encode
     # number conversion or string encoding
     def encode(self, rawstr, ibase=0):
         output = '';
@@ -71,18 +73,19 @@ class Base62x:
         xtag = self.XTAG;
         isdebug = self.isdebug;
         try:
+            bpos = self.bpos; b62x = self.b62x; rb62x = self.rb62x;
             # encode algrithms
             if isNum:
                 # number conversion
-                output = 0;
+                decnum = self._xx2dec(rawstr, ibase, rb62x); 
+                output = self._dec2xx(decnum, self.xpos, b62x); 
 
             else:
                 # string encoding
                 output = '';
                 inputArr = bytearray(rawstr, self.UTF8Tag);
                 inputLen = len(inputArr);
-                asctype = self._setAscii(codetype, inputArr);
-                bpos = self.bpos; b62x = self.b62x;
+                asctype = self._setAscii(codetype, inputArr); 
                 if isdebug:
                     print("enc rawstr:[{}] inputArr:[{}] asctype:[{}]"
                         .format(rawstr, inputArr, asctype));
@@ -189,7 +192,7 @@ class Base62x:
 
         return output;
 
-    # decode
+    ## decode
     # number conversion or string decoding
     def decode(self, encstr, obase=0):
         output = '';
@@ -200,11 +203,14 @@ class Base62x:
 
         xtag = self.XTAG;
         isdebug = self.isdebug;
+        bpos = self.bpos; ascrlist = self.ascrlist; 
+        rb62x = self.rb62x; b62x = self.b62x;
         try:
             # decode algorithm
             if isNum:
                 # number conversion
-                output = 0;
+                decnum = self._xx2dec(encstr, self.xpos, rb62x); 
+                output = self._dec2xx(decnum, obase, b62x); 
 
             else:
                 # string decoding
@@ -212,7 +218,6 @@ class Base62x:
                 inputArr = bytearray(encstr, self.UTF8Tag);
                 inputLen = len(inputArr);
                 asctype = self._setAscii(codetype, inputArr);
-                bpos = self.bpos; ascrlist = self.ascrlist; rb62x = self.rb62x; 
                 if isdebug:
                     print("dec rawstr:[{}] inputArr:[{}] asctype:[{}]"
                         .format(encstr, inputArr, asctype)); # , ascrlist, rb62x
@@ -282,11 +287,11 @@ class Base62x:
         
         return output;
 
-
     # private methods
-    # _fillRb62x
+    ## _fillRb62x
     def _fillRb62x(self):
        rtn = 0;
+       base59 = self.base59;
        for i in range(0, self.xpos):
            if i > self.bpos:
                # skip
@@ -294,9 +299,23 @@ class Base62x:
            else:
                self.rb62x[self.b62x[i]] = i;
 
+       # fill base62 table, hashref
+       rb62x_in = {}; rb62x = self.rb62x; 
+       for ri in rb62x:
+           rb62x_in[ri] = rb62x[ri];
+       rb62x_in['x'] = 59; rb62x_in['y'] = 60; rb62x_in['z'] = 61;
+       self.rb62xyz = rb62x_in;
+
+       # fill base62 table, array
+       b62x_in = []; b62x = self.b62x; 
+       for ri in range(base59):
+           b62x_in.append(b62x[ri]);
+       b62x_in.append('x'); b62x_in.append('y'); b62x_in.append('z');
+       self.b62xyz = b62x_in;
+
        return rtn;
 
-    # setAscii
+    ## setAscii
     def _setAscii(self, codetype, inputArr):
         asctype = 0;
         inputLen = len(inputArr);
@@ -318,7 +337,7 @@ class Base62x:
 
         return asctype;
 
-    # fillAscRlist
+    ## fillAscRlist
     def _fillAscRlist(self):
         rtn = 0;
         ascidx = self.ascidx;
@@ -346,7 +365,7 @@ class Base62x:
 
         return rtn;
 
-    # decode by length
+    ## decode by length
     def _decodeByLength(self, tmpArr):
         rtnArr = [];
         c0, c1, c2 = 0, 0, 0;
@@ -371,5 +390,75 @@ class Base62x:
            rtnArr.append(c0); 
 
         return rtnArr;
+
+    ## numbers into decimal
+    def _xx2dec(self, inum, ibase, rb62x):
+        rtnNum = 0;
+        max_safe_base = self.max_safe_base;
+        base59 = self.base59; xpos = self.xpos; bpos = self.bpos;
+        inums = str(inum);
+        xtag = self.XTAG;
+
+        if ibase > base59 and ibase < xpos:
+            # base 60, 61, 62 or sth, reset rb62 letters table
+            rb62x = self.rb62xyz;
+
+        if ibase <= max_safe_base:
+            # base 2 - 36
+            rtnNum = int(inums, ibase);
+        else:
+            # base 37+
+            rtnNum = 0; inumArr = bytearray(inums, self.UTF8Tag); inumArr.reverse();
+            numCount = len(inumArr); xnum = 0; i = 0;
+            while i < numCount:
+                ch = chr(inumArr[i]);
+                if (i+1) < numCount and chr(inumArr[i+1]) == xtag:
+                    tmpi = bpos + rb62x[ch];
+                    xnum += 1;
+                    i += 1;
+                else:
+                    tmpi = rb62x[ch];
+
+                rtnNum += tmpi * pow(ibase, (i - xnum));
+                i += 1;
+
+        return rtnNum;
+
+    ## numbers decimal to other bases
+    def _dec2xx(self, inum, obase, b62x):
+        rtnStr = '';
+        base59 = self.base59; xpos = self.xpos; bpos = self.bpos;
+        inums = str(inum);
+        xtag = self.XTAG;
+    
+        if obase > base59 and obase < xpos:
+            # base 60, 61, 62 or sth, reset rb62 letters table
+            b62x = self.b62xyz;
+
+        rtnStr = ''; i = 0; b = 0;
+        outArr = [];
+        while inum >= obase:
+           b = inum % obase;
+           inum = inum // obase;
+           if b <= bpos:
+               outArr.append(b62x[b]); i += 1;
+           else:
+               outArr.append(b62x[b - bpos]); i += 1;
+               outArr.append(xtag); i += 1;
+
+        b = inum;
+        if b > 0:
+            if b <= bpos:
+               outArr.append(b62x[b]); i += 1;
+            else:
+               outArr.append(b62x[b - bpos]); i += 1;
+               outArr.append(xtag); i += 1;
+        
+        outArr.reverse(); 
+        rtnStr = "".join(outArr);
+        if rtnStr == '':
+            rtnStr = 0;
+        
+        return rtnStr;
 
 # end

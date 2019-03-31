@@ -20,9 +20,12 @@ else{
 
 //- numbers
 
-$sArr = array('100', '1000', '10000', '1000001', 'abc', 'abc123', 
-	'ccbbaa1122ffa', 'a1122334eeeffb', '1a2b3c4d5e6f', 'aabbcc112233');
+$sArr = array('100', '1000', '101010', '1000001', 'abc', 'abc123', 
+	'ccbbaa112f', 'a1122334ef', '1a2b3c4d5e', 'aabbcc1122');
 
+#$sArr = array('ccbbaa112f', 'a1122334ef');
+
+if(true){
 $ibase = 20;
 foreach($sArr as $k=>$v){
 	$enc = Base62x::encode($s=$v, $ibase);
@@ -37,6 +40,13 @@ foreach($sArr as $k=>$v){
 	print "\nibase:$ibase $s enc:[".$enc."] dec:[$dec] eq:[".($s==$dec)."]";
 }
 $ibase = 32;
+foreach($sArr as $k=>$v){
+	$enc = Base62x::encode($s=$v, $ibase);
+	$dec = Base62x::decode($enc, $ibase);
+	print "\nibase:$ibase $s enc:[".$enc."] dec:[$dec] eq:[".($s==$dec)."]";
+}
+}
+$ibase = 60;
 foreach($sArr as $k=>$v){
 	$enc = Base62x::encode($s=$v, $ibase);
 	$dec = Base62x::decode($enc, $ibase);
