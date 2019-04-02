@@ -17,6 +17,7 @@
  * v0.9, bugfix on boundary checking for decode, Mon Dec 12 19:09:00 CST 2016, from PHP, Java version
  * v1.0, \0 in I/O, Fri Apr  7 19:08:44 CST 2017
  * v1.1, imprvs on decode, Mon Mar 11 05:19:25 GMT 2019
+ * v1.2, bugfix on number conversion with base 60+, Tue Apr  2 04:07:35 BST 2019
  */
 
 #include <stdio.h>
@@ -28,7 +29,7 @@ int isdebug = 0; /* output more details? */
 
 //- for integer conversion, issetn
 void *dec2xx(long long num, int base, char *out, char idx[]);
-long long xx2dec(char *input, int base, int safebase, char idx[]);
+long long xx2dec(char *input, int base, int safebase, char ridx[]);
 void reverse_array(char *ptr, int n);
 
 //- code types: numbers, strings {ascii, non-ascii}
@@ -51,7 +52,7 @@ int main(int argc, char *argv[]){
     int ascidx[ascmax+1];
     int ascrlist[ascmax+1]; 
     static const int max_safe_base = 36;
-    static const float ver = 1.1; //  Mon Mar 11 05:23:14 GMT 2019
+    static const float ver = 1.2; // Tue Apr  2 04:20:03 BST 2019
 
     if(argc<3){
 		printf("Usage: %s [-v] [-n <2|8|10|16|32|36|60|62>] <-enc|dec> string\n", argv[0]);
@@ -345,6 +346,11 @@ void *dec2xx(long long num, int base, char *out, char idx[]){
    
     int bpos = 60, xtag = 'x';
     int b=0, i=0;
+    int base59  = 59; int xpos = 64;
+    if(base > base59 && base < xpos){
+        // reset letters table
+        idx[59] = 'x'; idx[60] = 'y'; idx[61] = 'z';
+    }
     while(num >= base){
         b = num % base;
         num = floor( num / base);
@@ -361,7 +367,7 @@ void *dec2xx(long long num, int base, char *out, char idx[]){
         out[i++] = idx[num];
     }
     else{
-        out[i++] = idx[num - bpos]; //- will be reversed later
+        out[i++] = idx[num - bpos]; 
         out[i++] = xtag;
     }
 
@@ -372,7 +378,6 @@ void *dec2xx(long long num, int base, char *out, char idx[]){
     }
     
     reverse_array(out, strlen(out));
-    
     //return 0;
 
 }
@@ -380,20 +385,25 @@ void *dec2xx(long long num, int base, char *out, char idx[]){
 //- xx2dec
 //- return a long number
 long long xx2dec(char *input, int base, int safebase, char ridx[]){
-    
+
     int bpos = 60, xtag = 'x';
     int i=0, j=0, tmpnum;
     char *endptr;
     long long num = 0LL;
+    int base59 = 59; int xpos = 64;
 
     if(base < safebase){
-       num = strtoll(input, &endptr, base); 
+        num = strtoll(input, &endptr, base); 
     }
     else{
-       i = strlen(input);
-       reverse_array(input, i);
-       int xnum = 0; 
-       for(j=0; j<i; j++){
+        if(base > base59 && base < xpos){
+            // reset letters table
+            ridx['x'] = 59; ridx['y'] = 60; ridx['z'] = 61;
+        }
+        i = strlen(input);
+        reverse_array(input, i);
+        int xnum = 0; 
+        for(j=0; j<i; j++){
             if(input[j+1] == xtag){
                 tmpnum = bpos + ridx[input[j]];    
                 xnum++;
@@ -403,11 +413,10 @@ long long xx2dec(char *input, int base, int safebase, char ridx[]){
                 tmpnum = ridx[input[j]];
             }
             num += tmpnum * pow(base, j-xnum);
-       }
+        }
     }
 
     reverse_array(input, i);
-    
     return num;
 
 }
