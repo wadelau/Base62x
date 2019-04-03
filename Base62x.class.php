@@ -284,9 +284,9 @@ class Base62x {
 			$iArr = str_split($inum);
 			$iArr = array_reverse($iArr);
 			$arrLen = count($iArr);
-			$xnum = 0;
+			$xnum = 0; $isBase62x = ($ibase==$xpos);
 			for($i=0; $i<$arrLen; $i++){
-				if($iArr[$i+1] == $xtag){
+				if($isBase62x && $iArr[$i+1] == $xtag){
 					$tmpi = $bpos + $ridx[$iArr[$i]];
 					$xnum++;
 					$i++;
@@ -305,7 +305,6 @@ class Base62x {
 				error_log(__FILE__.": Base62x::xx2dec: lost precision due to too large number:[$onum]. consider using bc math. 1610072145.");
 				$onum = number_format($onum);	
 			}
-			#error_log(__FILE__.": xx2dec  after remedy i:$i c:".$iArr[$i]." onum:$onum");
 		}
 		#error_log(__FILE__.": xx2dec: in:$inum ibase:$ibase outindec:".$onum);
 		return $onum;
@@ -319,11 +318,11 @@ class Base62x {
 		$ibase = 10; $xtag = self::XTAG; $bpos = self::bpos;
 		$safebase = self::max_safe_base;
         $base59 = self::base59; $xpos = self::xpos;
-		#error_log(__FILE__.": dec2xx: 0 inindec:$inum obase:$obase");
 		if($obase <= $safebase){
 			$onum = base_convert($inum, $ibase, $obase);
 		}
 		else{
+            $isBase62x = false;
             if($obase > $base59 && $obase < $xpos){
                 #$idx = self::b62xyz;
                 $idx_in = array();
@@ -333,24 +332,27 @@ class Base62x {
                 $idx_in[59] = 'x'; $idx_in[60] = 'y'; $idx_in[61] = 'z';
                 $idx = $idx_in;
             }
+            else if($obase == $xpos){
+                $isBase62x = true;
+            }
+            $maxPos = $bpos;
+            if(!$isBase62x){ $maxPos = $bpos + 1; } # cover all 0-61 chars
 			$i = 0; $b = 0;
-			$oArr = array();
+			$oArr = array(); 
 			while($inum >= $obase){
 				$b = $inum % $obase;
 				$inum = floor($inum / $obase);
-				if($b <= $bpos){
+				if($b <= $maxPos){
 					$oArr[$i++] = $idx[$b];
 				}
 				else{
 					$oArr[$i++] = $idx[$b - $bpos];
 					$oArr[$i++] = $xtag;
 				}
-                #print "i:$i inum:$inum b:$b obase:$obase\n";
-                #print_r($oArr);
 			}
 			$b = $inum;
 			if($b > 0){
-				if($b <= $bpos){
+				if($b <= $maxPos){
 					$oArr[$i++] = $idx[$b];
 				}
 				else{
@@ -362,11 +364,10 @@ class Base62x {
             #print_r($oArr);
 			$onum = implode($oArr);
 		}
-		#error_log(__FILE__.": dec2xx: 1 inindec:$inum obase:$obase out:".($onum));
+		#error_log(__FILE__.": dec2xx: inindec:$inum obase:$obase out:".($onum));
 		return $onum;
 
 	}
-
 
 	# inner faciliates
 

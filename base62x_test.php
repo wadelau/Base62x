@@ -21,36 +21,25 @@ else{
 //- numbers
 
 $sArr = array('100', '1000', '101010', '1000001', 'abc', 'abc123', 
-	'ccbbaa112f', 'a1122334ef', '1a2b3c4d5e', 'aabbcc1122');
+	#'ccbbaa112f', 'a1122334ef', '1a2b3c4d5e', 'aabbcc1122');
+	#'ccbbaa112', 'a1122334ef', '1a2b3c4d5e', 'aabbcc122');
+	'ccbbaa1', 'a11223ef', '1a2b3ce', 'aabc122');
 
 #$sArr = array('ccbbaa112f', 'a1122334ef');
 
 if(true){
-$ibase = 20;
-foreach($sArr as $k=>$v){
-	$enc = Base62x::encode($s=$v, $ibase);
-	$dec = Base62x::decode($enc, $ibase);
-	print "\nibase:$ibase $s enc:[".$enc."] dec:[$dec] eq:[".($s==$dec)."]";
+
+$ibase = 20; $baseArr = array(16, 20, 32, 60, 62);
+$matchi = 0; $unmatchi = 0;
+foreach($baseArr as $bi=>$ibase){
+    foreach($sArr as $k=>$v){
+        $enc = Base62x::encode($s=$v, $ibase);
+        $dec = Base62x::decode($enc, $ibase);
+        if($s == $dec){ $matchi++; }else{ $unmatchi++; }
+        print "\nibase:$ibase $s enc:[".$enc."] dec:[$dec] eq:[".($s==$dec)."] mi:$matchi umi:$unmatchi\n";
+    }
 }
 
-$ibase = 16;
-foreach($sArr as $k=>$v){
-	$enc = Base62x::encode($s=$v, $ibase);
-	$dec = Base62x::decode($enc, $ibase);
-	print "\nibase:$ibase $s enc:[".$enc."] dec:[$dec] eq:[".($s==$dec)."]";
-}
-$ibase = 32;
-foreach($sArr as $k=>$v){
-	$enc = Base62x::encode($s=$v, $ibase);
-	$dec = Base62x::decode($enc, $ibase);
-	print "\nibase:$ibase $s enc:[".$enc."] dec:[$dec] eq:[".($s==$dec)."]";
-}
-}
-$ibase = 60;
-foreach($sArr as $k=>$v){
-	$enc = Base62x::encode($s=$v, $ibase);
-	$dec = Base62x::decode($enc, $ibase);
-	print "\nibase:$ibase $s enc:[".$enc."] dec:[$dec] eq:[".($s==$dec)."]";
 }
 
 //- strings
@@ -74,5 +63,5 @@ print "[$s3_enc] decoded:[".($s3_dec=Base62x::decode($s3_enc))."] eq:[".($s3==$s
 /*
 */
 
-?>
 
+?>

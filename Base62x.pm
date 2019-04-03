@@ -42,7 +42,7 @@ use constant {
     CVTN => '-n',
     };
 my ($i, $isdebug, $codetype) = (0, 0, 0);
-my ($bpos, $xpos, $ascmax, $max_safe_base) = (60, 64, 127, 36);
+my ($bpos, $xpos, $ascmax, $max_safe_base, $base59) = (60, 64, 127, 36, 59);
     # 0-60 chars; b62x[64] = 'x'
 my @b62x = ('0','1','2','3','4','5','6','7','8','9',
         'A','B','C','D','E','F','G','H','I','J','K','L','M','N',
@@ -423,12 +423,20 @@ sub _xx2dec($ $ $){
         $rtn = $self->_baseFrom($inum, $ibase);
     }
     else{
+        if($ibase > $base59 && $ibase < $xpos){
+            my %ridx_in = ();
+            for my $ri (keys %ridx){
+                $ridx_in{$ri} = $ridx{$ri};
+            }
+            $ridx_in{'x'} = 59; $ridx_in{'y'} = 60; $ridx_in{'z'} = 61;
+            %ridx = %ridx_in;
+        } 
         my @inArr = split(//, $inum);
         @inArr = reverse(@inArr);
         my $arrSize = scalar @inArr;
-        my $xnum = 0; my $tmpi = 0;
+        my $xnum = 0; my $tmpi = 0; my $isBase62x = ($ibase==$xpos);
         for($i=0; $i<$arrSize; $i++){
-            if(defined($inArr[$i+1]) && $inArr[$i+1] eq $xtag){
+            if($isBase62x && defined($inArr[$i+1]) && $inArr[$i+1] eq $xtag){
                 $tmpi = $bpos + $ridx{$inArr[$i]}; 
                 $xnum++;
                 $i++;
@@ -460,12 +468,27 @@ sub _dec2xx($ $ $){
         $rtn = $self->_baseTo($inum, $obase);
     }
     else{
+        my $isBase62x = 0;
+        if($obase > $base59 && $obase < $xpos){
+            my @idx_in = (); my $ri = 0; 
+            foreach my $rv (@ridx){
+                $idx_in[$ri++] = $rv;
+            }
+            $idx_in[59] = 'x'; $idx_in[60] = 'y'; $idx_in[61] = 'z';
+            @ridx = @idx_in;
+        }
+        elsif($obase == $xpos){
+            $isBase62x = 1;
+        }
+        my $maxPos = $bpos;
+        if($isBase62x == 0){ $maxPos = $bpos + 1; } # cover all 0-61 chars
+        
         $i = 0;
-        my $b = 0; my @outArr = ();
+        my $b = 0; my @outArr = (); 
         do{
             $b = $inum % $obase;
             $inum = int($inum / $obase);
-            if($b <= $bpos){
+            if($b <= $maxPos){
                 $outArr[$i++] = $ridx[$b];
             }
             else{
@@ -476,7 +499,7 @@ sub _dec2xx($ $ $){
         while($inum >= $obase);
         $b = $inum;
         if($b > 0){
-            if($b <= $bpos){
+            if($b <= $maxPos){
                 $outArr[$i++] = $ridx[$b];
             }
             else{
