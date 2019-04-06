@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 
-# -Base62x in -Python
-# import from Base62x in Perl.
+"""
+Base62x in Python
+import from Base62x in Perl.
 
-# Wadelau@{ufqi,gmail,hotmail}.com
-# Refers to
-#    http://ieeexplore.ieee.org/xpl/freeabs_all.jsp?arnumber=6020065
-#    -GitHub-Wadelau , base62x.c
-#    https://github.com/wadelau/Base62x
-#    https://ufqi.com/dev/base62x/?_via=-naturedns
-# since  Mon Mar  4 08:28:16 GMT 2019
-# alpha, Sat Mar  9 04:41:44 GMT 2019
+Wadelau@{ufqi,gmail,hotmail}.com
+Refers to
+   http://ieeexplore.ieee.org/xpl/freeabs_all.jsp?arnumber=6020065
+   -GitHub-Wadelau , base62x.c
+   https://github.com/wadelau/Base62x
+   https://ufqi.com/dev/base62x/?_via=-naturedns
+since  Mon Mar  4 08:28:16 GMT 2019
+alpha, Sat Mar  9 04:41:44 GMT 2019
+"""
 
 import sys
 import traceback
@@ -20,6 +22,9 @@ sys.path.append("./")  # pay attention!
 
 
 class Base62x:
+    """
+        docstring:
+    """
 
     # global variables
 
@@ -48,9 +53,7 @@ class Base62x:
         'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
         'q', 'r', 's', 't', 'u', 'v', 'w', 'y', 'z']  # 58
 
-    # constructor
     def __init__(self, argv={}):
-        # do something
         self.argv = argv  # no args?
         self.rb62x = {}
         self.ascidx = {}
@@ -59,8 +62,10 @@ class Base62x:
         # print("rb62x:{}".format(self.rb62x))
         return None
 
-    # number conversion or string encoding
     def encode(self, rawstr, ibase=0):
+        """
+            number conversion or string encoding
+        """
         output = ''
         codetype = self.codetype
         isNum = False
@@ -213,8 +218,10 @@ class Base62x:
 
         return output
 
-    # number conversion or string decoding
     def decode(self, encstr, obase=0):
+        """
+            number conversion or string decoding
+        """
         output = ''
         self.codetype = 1
         codetype = self.codetype
@@ -315,8 +322,6 @@ class Base62x:
 
         return output
 
-    # private methods
-    # #_fillRb62x
     def _fillRb62x(self):
         rtn = 0
         base59 = self.base59
@@ -348,7 +353,6 @@ class Base62x:
 
         return rtn
 
-    # setAscii
     def _setAscii(self, codetype, inputArr):
         asctype = 0
         inputLen = len(inputArr)
@@ -370,7 +374,6 @@ class Base62x:
 
         return asctype
 
-    # fillAscRlist
     def _fillAscRlist(self):
         rtn = 0
         ascidx = self.ascidx
@@ -398,8 +401,10 @@ class Base62x:
 
         return rtn
 
-    # decode by length
     def _decodeByLength(self, tmpArr):
+        """
+            decode by length
+        """
         rtnArr = []
         c0, c1, c2 = 0, 0, 0
         arrLen = len(tmpArr)
@@ -427,8 +432,10 @@ class Base62x:
 
         return rtnArr
 
-    # numbers into decimal
     def _xx2dec(self, inum, ibase, rb62x):
+        """
+            numbers into decimal
+        """
         rtnNum = 0
         max_safe_base = self.max_safe_base
         base59 = self.base59
@@ -466,8 +473,10 @@ class Base62x:
 
         return rtnNum
 
-    # numbers decimal to other bases
     def _dec2xx(self, inum, obase, b62x):
+        """
+            numbers decimal to other bases
+        """
         rtnStr = ''
         base59 = self.base59
         xpos = self.xpos
@@ -513,8 +522,3 @@ class Base62x:
         return rtnStr
 
 # end
-
-
-assert Base62x().encode('你好') == 'vBsWvQMx1'
-assert Base62x().decode('vBsWvQMx1') == '你好'
-print('ok.')
