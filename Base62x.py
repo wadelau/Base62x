@@ -15,7 +15,6 @@ alpha, Sat Mar  9 04:41:44 GMT 2019
 """
 
 import sys
-import traceback
 
 # self define modules
 sys.path.append("./")  # pay attention!
@@ -64,8 +63,12 @@ class Base62x:
 
     def encode(self, rawstr, ibase=0):
         """
+            (str, int) -> str
             number conversion or string encoding
         """
+        if not isinstance(rawstr, str):
+            raise TypeError('encoding without a string argument')
+
         output = ''
         codetype = self.codetype
         isNum = False
@@ -74,154 +77,152 @@ class Base62x:
 
         xtag = self.XTAG
         isdebug = self.isdebug
-        try:
-            bpos = self.bpos
-            b62x = self.b62x
-            rb62x = self.rb62x
-            # encode algrithms
-            if isNum:
-                # number conversion
-                decnum = self._xx2dec(rawstr, ibase, rb62x)
-                output = self._dec2xx(decnum, self.xpos, b62x)
+        bpos = self.bpos
+        b62x = self.b62x
+        rb62x = self.rb62x
+        # encode algrithms
+        if isNum:
+            # number conversion
+            decnum = self._xx2dec(rawstr, ibase, rb62x)
+            output = self._dec2xx(decnum, self.xpos, b62x)
+
+        else:
+            # string encoding
+            output = ''
+            inputArr = bytearray(rawstr, self.UTF8Tag)
+            inputLen = len(inputArr)
+            asctype = self._setAscii(codetype, inputArr)
+            if isdebug:
+                print("enc rawstr:[{}] inputArr:[{}] asctype:[{}]".format(
+                    rawstr, inputArr, asctype))
+
+            op = []
+            i = 0
+            m = 0
+            ixtag = ord(self.XTAG)
+            ascidx = self.ascidx
+            if asctype == 1:
+                # ascii string
+                while i < inputLen:
+                    if ascidx[inputArr[i]] != -1:
+                        op.append(ixtag)
+                        m += 1
+                        op.append(ord(ascidx[inputArr[i]]))
+                    elif inputArr[i] == ixtag:
+                        op.append(ixtag)
+                        m += 1
+                        op.append(ixtag)
+                    else:
+                        # print("\ti:[{}] m:[{}] ib:[{}]".format(i, m, inputArr[i]))
+                        op.append(inputArr[i])
+
+                    i += 1
+                    m += 1
+
+                op.append(ixtag)
+                output = "".join(map(chr, op))
 
             else:
-                # string encoding
-                output = ''
-                inputArr = bytearray(rawstr, self.UTF8Tag)
-                inputLen = len(inputArr)
-                asctype = self._setAscii(codetype, inputArr)
-                if isdebug:
-                    print("enc rawstr:[{}] inputArr:[{}] asctype:[{}]".format(
-                        rawstr, inputArr, asctype))
-
-                op = []
-                i = 0
-                m = 0
-                ixtag = ord(self.XTAG)
-                ascidx = self.ascidx
-                if asctype == 1:
-                    # ascii string
-                    while i < inputLen:
-                        if ascidx[inputArr[i]] != -1:
-                            op.append(ixtag)
+                # non-ascii string
+                c0, c1, c2, c3, remaini = 0, 0, 0, 0, 0
+                while i < inputLen:
+                    remaini = inputLen - i
+                    # most cases first
+                    if remaini > 2:
+                        c0 = inputArr[i] >> 2
+                        c1 = (((inputArr[i] << 6) & 0xff) >> 2) | (inputArr[i+1] >> 4)
+                        c2 = (((inputArr[i+1] << 4) & 0xff) >> 2) | (inputArr[i+2] >> 6)
+                        c3 = ((inputArr[i+2] << 2) & 0xff) >> 2
+                        if c0 > bpos:
+                            op.append(xtag)
                             m += 1
-                            op.append(ord(ascidx[inputArr[i]]))
-                        elif inputArr[i] == ixtag:
-                            op.append(ixtag)
-                            m += 1
-                            op.append(ixtag)
+                            op.append(b62x[c0])
                         else:
-                            # print("\ti:[{}] m:[{}] ib:[{}]".format(i, m, inputArr[i]))
-                            op.append(inputArr[i])
+                            op.append(b62x[c0])
+                        m += 1
+                        if c1 > bpos:
+                            op.append(xtag)
+                            m += 1
+                            op.append(b62x[c1])
+                        else:
+                            op.append(b62x[c1])
+                        m += 1
+                        if c2 > bpos:
+                            op.append(xtag)
+                            m += 1
+                            op.append(b62x[c2])
+                        else:
+                            op.append(b62x[c2])
+                        m += 1
+                        if c3 > bpos:
+                            op.append(xtag)
+                            m += 1
+                            op.append(b62x[c3])
+                        else:
+                            op.append(b62x[c3])
+
+                        i += 2
+
+                    elif remaini == 2:
+                        c0 = inputArr[i] >> 2
+                        c1 = (((inputArr[i] << 6) & 0xff) >> 2) | (inputArr[i+1] >> 4)
+                        c2 = ((inputArr[i+1] << 4) & 0xff) >> 4
+                        if c0 > bpos:
+                            op.append(xtag)
+                            m += 1
+                            op.append(b62x[c0])
+                        else:
+                            op.append(b62x[c0])
+                        m += 1
+                        if c1 > bpos:
+                            op.append(xtag)
+                            m += 1
+                            op.append(b62x[c1])
+                        else:
+                            op.append(b62x[c1])
+                        m += 1
+                        if c2 > bpos:
+                            op.append(xtag)
+                            m += 1
+                            op.append(b62x[c2])
+                        else:
+                            op.append(b62x[c2])
 
                         i += 1
+
+                    elif remaini == 1:
+                        c0 = inputArr[i] >> 2
+                        c1 = ((inputArr[i] << 6) & 0xff) >> 6
+                        if c0 > bpos:
+                            op.append(xtag)
+                            m += 1
+                            op.append(b62x[c0])
+                        else:
+                            op.append(b62x[c0])
                         m += 1
-
-                    op.append(ixtag)
-                    output = "".join(map(chr, op))
-
-                else:
-                    # non-ascii string
-                    c0, c1, c2, c3, remaini = 0, 0, 0, 0, 0
-                    while i < inputLen:
-                        remaini = inputLen - i
-                        # most cases first
-                        if remaini > 2:
-                            c0 = inputArr[i] >> 2
-                            c1 = (((inputArr[i] << 6) & 0xff) >> 2) | (inputArr[i+1] >> 4)
-                            c2 = (((inputArr[i+1] << 4) & 0xff) >> 2) | (inputArr[i+2] >> 6)
-                            c3 = ((inputArr[i+2] << 2) & 0xff) >> 2
-                            if c0 > bpos:
-                                op.append(xtag)
-                                m += 1
-                                op.append(b62x[c0])
-                            else:
-                                op.append(b62x[c0])
+                        if c1 > bpos:
+                            op.append(xtag)
                             m += 1
-                            if c1 > bpos:
-                                op.append(xtag)
-                                m += 1
-                                op.append(b62x[c1])
-                            else:
-                                op.append(b62x[c1])
-                            m += 1
-                            if c2 > bpos:
-                                op.append(xtag)
-                                m += 1
-                                op.append(b62x[c2])
-                            else:
-                                op.append(b62x[c2])
-                            m += 1
-                            if c3 > bpos:
-                                op.append(xtag)
-                                m += 1
-                                op.append(b62x[c3])
-                            else:
-                                op.append(b62x[c3])
+                            op.append(b62x[c1])
+                        else:
+                            op.append(b62x[c1])
 
-                            i += 2
+                    # print("\t\ti:[{}] v:[{}] op:[{}]".format(i, inputArr[i], op))
+                    i += 1
+                    m += 1
 
-                        elif remaini == 2:
-                            c0 = inputArr[i] >> 2
-                            c1 = (((inputArr[i] << 6) & 0xff) >> 2) | (inputArr[i+1] >> 4)
-                            c2 = ((inputArr[i+1] << 4) & 0xff) >> 4
-                            if c0 > bpos:
-                                op.append(xtag)
-                                m += 1
-                                op.append(b62x[c0])
-                            else:
-                                op.append(b62x[c0])
-                            m += 1
-                            if c1 > bpos:
-                                op.append(xtag)
-                                m += 1
-                                op.append(b62x[c1])
-                            else:
-                                op.append(b62x[c1])
-                            m += 1
-                            if c2 > bpos:
-                                op.append(xtag)
-                                m += 1
-                                op.append(b62x[c2])
-                            else:
-                                op.append(b62x[c2])
-
-                            i += 1
-
-                        elif remaini == 1:
-                            c0 = inputArr[i] >> 2
-                            c1 = ((inputArr[i] << 6) & 0xff) >> 6
-                            if c0 > bpos:
-                                op.append(xtag)
-                                m += 1
-                                op.append(b62x[c0])
-                            else:
-                                op.append(b62x[c0])
-                            m += 1
-                            if c1 > bpos:
-                                op.append(xtag)
-                                m += 1
-                                op.append(b62x[c1])
-                            else:
-                                op.append(b62x[c1])
-
-                        # print("\t\ti:[{}] v:[{}] op:[{}]".format(i, inputArr[i], op))
-                        i += 1
-                        m += 1
-
-                    output = "".join(op)
-
-        except Exception:
-            print("Error with encode:[{}] ibase:[{}]".format(rawstr, ibase))
-            traceback.print_exc(file=sys.stdout)
-            pass
+                output = "".join(op)
 
         return output
 
     def decode(self, encstr, obase=0):
         """
+            (str, int) -> str
             number conversion or string decoding
         """
+        if not isinstance(encstr, str):
+            raise TypeError('encoding without a string argument')
+
         output = ''
         self.codetype = 1
         codetype = self.codetype
@@ -234,91 +235,85 @@ class Base62x:
         ascrlist = self.ascrlist
         rb62x = self.rb62x
         b62x = self.b62x
-        try:
-            # decode algorithm
-            if isNum:
-                # number conversion
-                decnum = self._xx2dec(encstr, self.xpos, rb62x)
-                output = self._dec2xx(decnum, obase, b62x)
+        # decode algorithm
+        if isNum:
+            # number conversion
+            decnum = self._xx2dec(encstr, self.xpos, rb62x)
+            output = self._dec2xx(decnum, obase, b62x)
+
+        else:
+            # string decoding
+            output = ''
+            inputArr = bytearray(encstr, self.UTF8Tag)
+            inputLen = len(inputArr)
+            asctype = self._setAscii(codetype, inputArr)
+            if isdebug:
+                print("dec rawstr:[{}] inputArr:[{}] asctype:[{}]".format(
+                    encstr, inputArr, asctype))  # , ascrlist, rb62x
+
+            op = []
+            i = 0
+            m = 0
+            ixtag = ord(self.XTAG)
+
+            if asctype == 1:
+                # ascii string
+                inputLen -= 1  # remove last 'x'
+                while i < inputLen:
+                    if inputArr[i] == ixtag:
+                        if inputArr[i+1] == ixtag:
+                            op.append(ixtag)
+                            i += 1
+                        else:
+                            # print("\ti:[{}] m:[{}] ib:[{}]".format(i, m, inputArr[i]))
+                            i += 1
+                            op.append(ascrlist[chr(inputArr[i])])
+                    else:
+                        op.append(inputArr[i])
+
+                    i += 1
+                    m += 1
+
+                output = "".join(map(chr, op))
 
             else:
-                # string decoding
-                output = ''
-                inputArr = bytearray(encstr, self.UTF8Tag)
-                inputLen = len(inputArr)
-                asctype = self._setAscii(codetype, inputArr)
-                if isdebug:
-                    print("dec rawstr:[{}] inputArr:[{}] asctype:[{}]".format(
-                        encstr, inputArr, asctype))  # , ascrlist, rb62x
-
-                op = []
-                i = 0
-                m = 0
-                ixtag = ord(self.XTAG)
-
-                if asctype == 1:
-                    # ascii string
-                    inputLen -= 1  # remove last 'x'
-                    while i < inputLen:
-                        if inputArr[i] == ixtag:
-                            if inputArr[i+1] == ixtag:
-                                op.append(ixtag)
+                # non-ascii string
+                tmpArr, tmpArr2 = [], []
+                remaini = 0
+                bint = [0, 1, 2, 3]
+                while i < inputLen:
+                    tmpArr = []
+                    tmpArr2 = []
+                    remaini = inputLen - i
+                    if remaini > 1:
+                        j = 0
+                        while (j < 4 and i < inputLen):
+                            if inputArr[i] == ixtag:
                                 i += 1
+                                # print("\ti:[{}]/j:[{}] input:[{}]/[{}] tmpArr:[{}]"
+                                #    .format(i, j, inputArr[i], chr(inputArr[i]), tmpArr))
+                                tmpArr.append(bpos + bint[int(chr(inputArr[i]))])
                             else:
-                                # print("\ti:[{}] m:[{}] ib:[{}]".format(i, m, inputArr[i]))
-                                i += 1
-                                op.append(ascrlist[chr(inputArr[i])])
-                        else:
-                            op.append(inputArr[i])
+                                tmpArr.append(rb62x[chr(inputArr[i])])
 
-                        i += 1
-                        m += 1
+                            # print("i:[{}]/j:[{}] input:[{}] tmpArr:[{}]".format(i, j, inputArr[i], tmpArr))
+                            i += 1
+                            j += 1
 
-                    output = "".join(map(chr, op))
+                        tmpArr2 = self._decodeByLength(tmpArr)
+                        for ia in tmpArr2:
+                            op.append(ia)
 
-                else:
-                    # non-ascii string
-                    tmpArr, tmpArr2 = [], []
-                    remaini = 0
-                    bint = [0, 1, 2, 3]
-                    while i < inputLen:
-                        tmpArr = []
-                        tmpArr2 = []
-                        remaini = inputLen - i
-                        if remaini > 1:
-                            j = 0
-                            while (j < 4 and i < inputLen):
-                                if inputArr[i] == ixtag:
-                                    i += 1
-                                    # print("\ti:[{}]/j:[{}] input:[{}]/[{}] tmpArr:[{}]"
-                                    #    .format(i, j, inputArr[i], chr(inputArr[i]), tmpArr))
-                                    tmpArr.append(bpos + bint[int(chr(inputArr[i]))])
-                                else:
-                                    tmpArr.append(rb62x[chr(inputArr[i])])
+                    elif remaini == 1:
+                        print("{} found illegal input:[{}]. 1903091005. i:[{}]".format(
+                            self.LogTag, inputArr[i], i))
+                        continue
 
-                                # print("i:[{}]/j:[{}] input:[{}] tmpArr:[{}]".format(i, j, inputArr[i], tmpArr))
-                                i += 1
-                                j += 1
+                    m += 1
 
-                            tmpArr2 = self._decodeByLength(tmpArr)
-                            for ia in tmpArr2:
-                                op.append(ia)
-
-                        elif remaini == 1:
-                            print("{} found illegal input:[{}]. 1903091005. i:[{}]".format(
-                                self.LogTag, inputArr[i], i))
-                            continue
-
-                        m += 1
-
-                    # print("i:[{}]/m:[{}] op:[{}]".format(i, m, op))
-                    op = str(bytes(op), self.UTF8Tag)
-                    output = "".join(op)
-
-        except Exception:
-            print("Error with decode:[{}] obase:[{}]".format(encstr, obase))
-            traceback.print_exc(file=sys.stdout)
-            pass
+                # print("i:[{}]/m:[{}] op:[{}]".format(i, m, op))
+                op = str(bytes(op), self.UTF8Tag)
+                output = "".join(op)
 
         return output
 
@@ -520,5 +515,3 @@ class Base62x:
             rtnStr = 0
 
         return rtnStr
-
-# end
