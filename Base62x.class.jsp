@@ -11,6 +11,7 @@
  *  Sat Aug 13 10:48:52 CST 2016
  *  bugfix by decodeByLength, Sat Dec  3 23:05:58 CST 2016
  *  imprvs with decode, Mon Mar 11 04:12:02 UTC 2019
+ *  bugfox for number conversion with base 60+, Sun Apr  7 02:56:09 BST 2019
  */
  //- Assume We Are in Charset of UTF-8 Runtime
 
@@ -57,7 +58,8 @@ public static final class Base62x{
 	private static int[] ascidx = new int[ascmax + 1];
 	private static byte[] ascrlist = new byte[ascmax + 1];
 	private static final int max_safe_base = 36; //- 17:56 14 February 2017
-	private static final double ver = 0.80;
+	private static final double ver = 0.90; //- Sun Apr  7 02:56:25 BST 2019
+    private static final int base59 = 59;
 
 
 	//- contructors
@@ -375,6 +377,7 @@ public static final class Base62x{
 		int obase = 10; char xtag = Base62x.xtag;
 		int bpos = Base62x.bpos; int xpos = Base62x.xpos;
 		int max_safe_base = Base62x.max_safe_base;
+        int base59 = Base62x.base59;
 		if(ibase < 2 || ibase > xpos){
 			System.out.println("Base62x.xx2dec: illegal ibase:["+ibase+"]");
 		}
@@ -382,13 +385,20 @@ public static final class Base62x{
 			rtn = Long.parseLong(Long.toString(Long.parseLong(input, ibase), obase));
 		}
 		else{
+            boolean isBase62x = false;
+            if(ibase > base59 && ibase < xpos){
+                rb62x['x'] = 59; rb62x['y'] = 60; rb62x['z'] = 61;  
+            }
+            else if(ibase == xpos){
+                isBase62x = true;
+            }
 			char[] iarr = (new StringBuilder(new String(input)).reverse().toString())
 					.toCharArray();
 			int arrlen = iarr.length;
 			int xnum = 0; int tmpi = 0;
 			//java.util.Collections.reverse(iarr);
 			for(int i=0; i<arrlen; i++){
-				if(i+1 < arrlen && iarr[i+1] == xtag){
+				if(isBase62x && (i+1) < arrlen && iarr[i+1] == xtag){
 					tmpi = bpos + rb62x[iarr[i]];
 					xnum++;
 					i++;
@@ -417,6 +427,7 @@ public static final class Base62x{
 		int bpos = Base62x.bpos; int xpos = Base62x.xpos;
 		int max_safe_base = Base62x.max_safe_base;
 		String inputs = Long.toString(num_input);
+        int base59 = Base62x.base59;
 		if(ibase < 2 || ibase > xpos){
 			System.out.println("Base62x.xx2dec: illegal ibase:["+ibase+"]");
 		}
@@ -424,14 +435,23 @@ public static final class Base62x{
 			rtn = Long.toString(Long.parseLong(inputs, ibase), obase);
 		}
 		else{
+            boolean isBase62x = false;
+            if(obase > base59 && obase < xpos){
+                b62x[59] = 'x'; b62x[60] = 'y'; b62x[61] = 'z';
+            }
+            else if(obase == xpos){
+                isBase62x = true;
+            }
 			int i = 0; int b = 0;
 			int inputlen = inputs.length();
 			int outlen = (int)(inputlen*Math.log(ibase)/Math.log(obase))+1;
 			char[] oarr = new char[outlen]; //- why threefold?
+            int maxPos = bpos;
+            if(!isBase62x){ maxPos = bpos + 1; }
 			while(num_input >= obase){
 				b = (int)(num_input % obase);
 				num_input = (long)Math.floor(num_input/obase);
-				if(b <= bpos){
+				if(b <= maxPos){
 					oarr[i++] = (char)b62x[b];
 				}
 				else{
@@ -441,7 +461,7 @@ public static final class Base62x{
 			}
 			b = (int)num_input;
 			if(b > 0){
-				if(b <= bpos){
+				if(b <= maxPos){
 					oarr[i++] = (char)b62x[b];
 				}
 				else{

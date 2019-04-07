@@ -347,14 +347,18 @@ void *dec2xx(long long num, int base, char *out, char idx[]){
     int bpos = 60, xtag = 'x';
     int b=0, i=0;
     int base59  = 59; int xpos = 64;
+	int isBase62x = 0;
     if(base > base59 && base < xpos){
         // reset letters table
         idx[59] = 'x'; idx[60] = 'y'; idx[61] = 'z';
     }
+	else if(base == xpos){ isBase62x = 1; }
+	int maxPos = bpos;
+	if(isBase62x == 0){ maxPos = bpos + 1; }
     while(num >= base){
         b = num % base;
         num = floor( num / base);
-        if(b <= bpos){
+        if(b <= maxPos){
             out[i++] = idx[b]; 
         }
         else{
@@ -363,7 +367,7 @@ void *dec2xx(long long num, int base, char *out, char idx[]){
         }
     }
 
-    if( num <= bpos){
+    if( num <= maxPos){
         out[i++] = idx[num];
     }
     else{
@@ -396,15 +400,17 @@ long long xx2dec(char *input, int base, int safebase, char ridx[]){
         num = strtoll(input, &endptr, base); 
     }
     else{
+		int isBase62x = 0;
         if(base > base59 && base < xpos){
             // reset letters table
             ridx['x'] = 59; ridx['y'] = 60; ridx['z'] = 61;
         }
+		else if(base == xpos){ isBase62x = 1; }
         i = strlen(input);
         reverse_array(input, i);
         int xnum = 0; 
         for(j=0; j<i; j++){
-            if(input[j+1] == xtag){
+            if(isBase62x == 1 && input[j+1] == xtag){
                 tmpnum = bpos + ridx[input[j]];    
                 xnum++;
                 j++;

@@ -458,10 +458,13 @@ class Base62x:
             inumArr.reverse()
             numCount = len(inumArr)
             xnum = 0
+            isBase62x = False
+            if ibase == xpos:
+                isBase62x = True
             i = 0
             while i < numCount:
                 ch = chr(inumArr[i])
-                if (i+1) < numCount and chr(inumArr[i+1]) == xtag:
+                if isBase62x and (i+1) < numCount and chr(inumArr[i+1]) == xtag:
                     tmpi = bpos + rb62x[ch]
                     xnum += 1
                     i += 1
@@ -488,13 +491,19 @@ class Base62x:
             b62x = self.b62xyz
 
         rtnStr = ''
+        isBase62x = False
+        if obase == xpos:
+            isBase62x = True
+        maxPos = bpos;
+        if not isBase62x:
+            maxPos = bpos + 1
         i = 0
         b = 0
         outArr = []
         while inum >= obase:
             b = inum % obase
             inum = inum // obase
-            if b <= bpos:
+            if b <= maxPos:
                 outArr.append(b62x[b])
                 i += 1
             else:
@@ -505,7 +514,7 @@ class Base62x:
 
         b = inum
         if b > 0:
-            if b <= bpos:
+            if b <= maxPos:
                 outArr.append(b62x[b])
                 i += 1
             else:

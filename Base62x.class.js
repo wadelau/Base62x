@@ -8,6 +8,7 @@
  	https://ufqi.com/dev/base62x/?_via=-naturedns
  * v0.8, 21:49 12 February 2017
  * v0.9, imprvs with decode, Mon Mar 11 02:09:55 GMT 2019
+ * v1.0, bugfix for number conversion with base 60+, Sun Apr  7 02:22:24 BST 2019
  */
  
  'use strict';
@@ -287,7 +288,8 @@
 			'ascidx': [],
 			'ascrlist': [],
 			'max_safe_base': 36,
-			'ver': 0.8,
+			'ver': 1.0,
+            'base59': 59,
 		 };
 		 var gotV = false;
 		 //- runtime
@@ -391,7 +393,7 @@
 		 var rtn = 0;
 		 var obase = 10; var xtag = this.get('xtag');
 		 var bpos = this.get('bpos'); var max_safe_base = this.get('max_safe_base');
-		 var xpos = this.get('xpos');
+		 var xpos = this.get('xpos'); var base59 = this.get('base59');
 		 if(ibase < 2 || ibase > xpos){
 			console.log('static xx2dec: illegal ibase:['+ibase+']');
 		 }
@@ -399,12 +401,17 @@
 			 rtn = parseInt(input+'', ibase|0).toString(obase|0); //http://locutus.io/php/math/base_convert/
 		 }
 		 else{
+             var isBase62x = false;
+             if(ibase > base59 && ibase < xpos){
+                rb62x['x'] = 59; rb62x['y'] = 60; rb62x['z'] = 61;
+             }
+             else if(ibase == xpos){ isBase62x = true; }
 			 var iArr = input.split('');
 			 var aLen = iArr.length;
 			 var xnum = 0; var tmpi = 0;
 			 iArr.reverse();
 			 for(var i=0; i<aLen; i++){
-				 if(iArr[i+1] == xtag){
+				 if(isBase62x && iArr[i+1] == xtag){
 					 tmpi = bpos + rb62x[iArr[i]];
 					 xnum++;
 					 i++;
@@ -427,6 +434,7 @@
 		 var ibase = 10; var xtag = this.get('xtag');
 		 var bpos = this.get('bpos'); var max_safe_base = this.get('max_safe_base');
 		 var xpos = this.get('xpos'); var num_input_orig = num_input;
+         var base59 = this.get('base59');
 		 if(obase < 2 || obase > xpos){
 			console.log('static xx2dec: illegal ibase:['+ibase+']');
 		 }
@@ -434,12 +442,21 @@
 			 rtn = parseInt(num_input+'', ibase|0).toString(obase|0); 
 		 }
 		 else{
+             var isBase62x = false;
+             if(obase > base59 && obase < xpos){
+                b62x[59] = 'x'; b62x[60] = 'y'; b62x[61] = 'z';
+             }
+             else if(obase == xpos){
+                isBase62x = true;
+             }
+             var maxPos = bpos;
+             if(!isBase62x){ maxPos = bpos + 1; }
 			 var i = 0; var b = 0;
 			 var oArr = [];
 			 while(num_input >= obase){
 				 b = num_input % obase;
 				 num_input = Math.floor(num_input/obase);
-				 if(b <= bpos){
+				 if(b <= maxPos){
 					 oArr[i++] = b62x[b];
 				 }
 				 else{
@@ -448,7 +465,7 @@
 				 }
 			 }
 			 b = num_input;
-			 if(b <= bpos){
+			 if(b <= maxPos){
 				 oArr[i++] = b62x[b];
 			 }
 			 else{

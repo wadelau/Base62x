@@ -47,7 +47,7 @@ for i in range(2, 37):
 
 ibase = 60; succc = 0; failc = 0; num = 0;
 while num < 10000000:
-    for ibase in range(10, 61):
+    for ibase in range(10, 62):
         a = num;
         encstr = base62x.encode(a, ibase);
         decstr = base62x.decode(encstr, ibase);
