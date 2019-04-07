@@ -1,3 +1,3 @@
 
 test:
-	@python -m unittest Base62x.py
+	@python -m unittest ./test_Base62x.py
