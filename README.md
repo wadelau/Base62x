@@ -59,6 +59,18 @@ IEEE Article Number, 6020065 ;
 
 [-Base62x in RearchGate, -R/12Sb ](http://ufqi.com/naturedns/search?q=-R/12Sb ) .
 
+## Reference & Citation
+
+```text
+@article{Liu2011Base62x,
+	title={Base62x: An alternative approach to Base64 for only-alphanumeric characters in output},
+	author={Liu, Zhenxing and Liu, Lu and Hill, Richard and Zhan, Yongzhao},
+	journal={2011 Eighth International Conference on Fuzzy Systems and Knowledge Discovery (FSKD)},
+	year={2011},
+	url={https://ieeexplore.ieee.org/document/6020065/}
+}
+```
+
 
 <a name="c"></a>
 # base62x.c 
