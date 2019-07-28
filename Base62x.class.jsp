@@ -12,6 +12,7 @@
  *  bugfix by decodeByLength, Sat Dec  3 23:05:58 CST 2016
  *  imprvs with decode, Mon Mar 11 04:12:02 UTC 2019
  *  bugfox for number conversion with base 60+, Sun Apr  7 02:56:09 BST 2019
+ *  bugfix for input.length==1, 09:13 Sunday, July 28, 2019 
  */
  //- Assume We Are in Charset of UTF-8 Runtime
 
@@ -61,7 +62,6 @@ public static final class Base62x{
 	private static final double ver = 0.90; //- Sun Apr  7 02:56:25 BST 2019
     private static final int base59 = 59;
 
-
 	//- contructors
 	//- @todo
 
@@ -83,6 +83,8 @@ public static final class Base62x{
 		int xpos = Base62x.xpos;
 		int ascmax = Base62x.ascmax;
 
+		try{
+			//- main enc logic
 		int[] rb62x = Base62x.fillRb62x(b62x, bpos, xpos);
 		boolean isnum = false;
 		if(ibase > 0){ isnum = true; }
@@ -103,7 +105,7 @@ public static final class Base62x{
 			ascidx = (int[])setResult.get("ascidx");
 			ascrlist = (byte[])setResult.get("ascrlist");
 
-			byte[] op = new byte[inputlen*2]; //- extend to 3/2 or 2 theoritical maxium length of base62x 
+			byte[] op = new byte[inputlen*2+1]; //- extend to 3/2 or 2 theoritical maxium length of base62x 
 			int i=0; int m=0;
 
 			if(isasc){
@@ -178,7 +180,11 @@ public static final class Base62x{
 			System.arraycopy(op, 0, op2, 0, m);	
 			osb.append(new String(op2));
 		}
-
+			//- main enc logic, end
+		}
+		catch(Exception ex0727){
+			ex0727.printStackTrace();
+		}
 		return osb.toString();
 
 	}
@@ -199,6 +205,8 @@ public static final class Base62x{
 		int xpos = Base62x.xpos;
 		int ascmax = Base62x.ascmax;
 
+		try{
+			//- main dec logic
 		int[] rb62x = Base62x.fillRb62x(b62x, bpos, xpos);
 		boolean isnum = false;
 		if(obase > 0){ isnum = true; }
@@ -284,7 +292,11 @@ public static final class Base62x{
 			System.arraycopy(op, 0, op2, 0, m);	
 			osb.append(new String(op2)); //, StandardCharsets.UTF_8
 		}
-
+			//- main dec logic, end
+		}
+		catch(Exception ex072721){
+			ex072721.printStackTrace();
+		}
 		return osb.toString();
 	
 	}
