@@ -8,6 +8,7 @@
  	https://github.com/wadelau/Base62x
  	https://ufqi.com/dev/base62x/?_via=-naturedns
  * v1.2, Mon Feb 17 03:26:48 UTC 2020
+ * @todo, not ready!
  */
 
 # include <iostream>
@@ -45,7 +46,7 @@ int main(int argc, char *argv[]){
 	int asctype = 0; // for ascii 
 	int issetv = 0; // verbose
 	int issetn = 0; // num conv
-	int fbase = 2; // from num base
+	int fbase = 0; // from num base
     int codetype = myb62x.codetype;
     string enc = myb62x.enc;
     string dec = myb62x.dec;
@@ -85,8 +86,11 @@ int main(int argc, char *argv[]){
 	unsigned char output[arrsize]; //*output[ arrsize ] 
 
 	//- for enc
+	//output = myb62x.encode(input, fbase);
 
     //- for dec
+	int obase = fbase;
+	//output = myb62x.decode(input, obase);
 		
     cout << "Hello Wolrd!" << argc << "\n";
     cout << "\n";
