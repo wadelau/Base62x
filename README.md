@@ -280,10 +280,13 @@ Test cases for Base62x in Python.
 <a name="cpp"></a>
 # Base62x in -cplusplus / C++ 
 
-## base62x_test.cpp
+### base62x_test.cpp
 
+Test scripts.
 
-## Base62x.class.hpp
+### Base62x.class.hpp
+
+Main class for the conversion.
 
 
 
