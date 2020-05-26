@@ -133,6 +133,13 @@ print "[$s3_enc] decoded:[".($s3_dec=Base62x::decode($s3_enc))."]\n";
 ?>
 ```
 
+
+Another recommended Base62x PHP Library: 
+
+https://github.com/mauriziofonte/php-base62x 
+
+
+
 <a name="java"></a>
 # Base62x in -Java 
 
