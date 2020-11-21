@@ -58,7 +58,7 @@ Base62x.decode(encodedString, outBase);
 
 IEEE Article Number, 6020065 ;
 
-[ -R/p2SK ](http://ufqi.com/naturedns/search?q=-r/C2TZ) , page url in [ -URL4P ](http://ufqi.com/naturedns/search?q=-url4p) .
+[ -R/F2SQ ](http://ufqi.com/naturedns/search?q=-R/F2SQ) , page url in [ -URL4P ](http://ufqi.com/naturedns/search?q=-url4p) .
 
 [-Base62x in RearchGate, -R/12Sb ](http://ufqi.com/naturedns/search?q=-R/12Sb ) .
 
