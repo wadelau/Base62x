@@ -227,6 +227,7 @@
                     }
                     else{
                         console.log('static decode: illegal base62x input:['+inputArr[i]+']. 1702122106.');
+                        i++;
                         continue;
                     }
 					m++;

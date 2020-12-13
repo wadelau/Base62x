@@ -316,6 +316,7 @@ int main(int argc, char *argv[]){
                 }
                 else{
 					printf("Base62x.decode: found illegal base62x input:[%s]! 1612121816.\n", input);
+                    i++;
                     continue;
                 } 
 				m++; //- deprecated.

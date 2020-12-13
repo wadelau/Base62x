@@ -266,6 +266,7 @@ sub decode($ $){
                 }
                 elsif($remaini == 1){
                     print($LOGTAG.": found illegal base62x input:[".$inputArr[$i]."]. 1608091042.");
+                    $i++;
                     next;
                 } 
                 $m++;

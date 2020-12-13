@@ -282,6 +282,7 @@ public static final class Base62x{
 					}
 					else{ //- == 1
 						System.out.println("Base62x.decode: illegal base62x input:["+input+"]. 1608091042.");
+                        i++;
 						continue;
 					}
 					m++;

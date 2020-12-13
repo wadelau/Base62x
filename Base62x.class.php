@@ -247,6 +247,7 @@ class Base62x {
                     }
                     else{
 						error_log(__FILE__.": found illegal base62x input:[".$inputArr[$i]."]. 1608091042.");
+                        $i++;
                         continue;
                     }
                     $m++;
