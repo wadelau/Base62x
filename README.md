@@ -1,5 +1,5 @@
 
-Base62x: An alternative approach to Base64 for only-alphanumeric [a-zA-Z0-9] characters in output.
+Base62x: An alternative approach to Base64 for alphanumeric-only [a-zA-Z0-9] characters in output.
 
 Base62x is an non-symbolic Base64 encoding scheme. It can be used safely in computer file systems, programming languages for data exchange, internet communication systems, etc,  and it is an ideal substitute and successor of many variants of Base64 encoding scheme.
 
@@ -27,6 +27,8 @@ Base62x 是一种无符号 [a-zA-Z0-9] 的Base64编码方案。
 [-Base62x in C++](#cpp)
 
 [-Base62x in C#](#csharp)
+
+[-Base62x in Dart](#Dart)
 
 
 # -Base62x
@@ -113,9 +115,7 @@ In base62x_test.php
 include("./base62x.class.php");
 
 $s = "abcd1234";
-
 $s2 = "abc中文123";
-
 $s3 = "\"Tcler's Wiki: UTF-8 bit by bit (Revision 6)\". 2009-04-25. Retrieved 2009-05-22."
 	."In orthodox UTF-8, a NUL byte (\\x00) is represented by a NUL byte. […] But […] we "
 	."[…] want NUL bytes inside […] strings […] | ① ② ③ ④ ⑤ ⑥ ⑦ |  Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅷ Ⅸ Ⅹ | "
@@ -296,12 +296,16 @@ Test scripts.
 Main class for the conversion.
 
 
-
 <a name="csharp"></a>
 # Base62x in -csharp / C# 
 
 @todo
 
+<a name="Dart"></a>
+# Base62x in -Dart
 
+dart-base62x
 
+https://pub.dev/packages/base62x
+https://gitee.com/yf-frontend/dart-base62x/tree/main
 
