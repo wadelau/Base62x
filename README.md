@@ -1,11 +1,11 @@
 
 Base62x: An alternative approach to Base64 for alphanumeric-only [a-zA-Z0-9] characters in output.
 
-Base62x is an non-symbolic Base64 encoding scheme. It can be used safely in computer file systems, programming languages for data exchange, internet communication systems, etc,  and it is an ideal substitute and successor of many variants of Base64 encoding scheme.
+Base62x is an non-symbolic Base64 encoding scheme. It can be used safely in computer file systems, programming languages for data exchange, internet communication systems, etc,  and it is an ideal substitute and successor of tradtional Base64 and many variants of Base64 encoding scheme.
 
 Base62x 是一种无符号 [a-zA-Z0-9] 的Base64编码方案。
 
-她可以在计算机文件系统、编程语言数据交换、互联网络通信系统等方面可以安全地使用，同时是各种变种Base64编码方案的理想替代品、继任者。
+她可以在计算机文件系统、编程语言数据交换、互联网络通信系统等方面安全地使用，同时是传统算法和各种变种Base64编码方案的理想替代品、继任者。
 
 # Contents
 [Base62x Usage](#Usage)
