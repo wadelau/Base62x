@@ -283,6 +283,10 @@ Base62x_test.py
 
 Test cases for Base62x in Python.
 
+One more Base62x in Python:
+
+https://www.freesuch.com/read/admin/works/程序员笔记/base62x的实现.rtf
+
 
 <a name="cpp"></a>
 # Base62x in -cplusplus / C++ 
